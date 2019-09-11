@@ -1,0 +1,285 @@
+\documentclass{article}
+\usepackage{morris}
+
+\renewcommand{\thesection}{Problem \arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\alph{subsubsection})}
+
+\title{Machine Learning 2 --- Homework 1}
+\author{%
+  Maurice Frank\\
+  11650656\\
+  \href{mailto:maurice.frank@posteo.de}{maurice.frank@posteo.de}
+}
+
+\begin{document}
+\maketitle
+
+\section{}
+We have: \(\B{x}\∈\ℝ^n\), \(p(\B{x})=\N(\B{x}|\B{\μ_x}, \B{\Sigma_x})\) and \(\B{z}\∈\ℝ^n\), \(p(\B{z})=\N(\B{z}|\B{\μ_z}, \B{\Sigma_z})\).
+And:
+\begin{align*}
+    \B{y}
+    &= \B{x} + \B{z}\\
+    &\⇒\\
+    \E[\B{y}]
+    &= \E[\B{x} + \B{z}]\\
+    &= \E[\B{x}] + \E[\B{z}]\\
+    &= \B{\μ_x} + \B{\μ_z}\\
+    \cov{(\B{y})}
+    &= \E[{(\B{x} + \B{y})}^2] - {(\E[\B{x} + \B{y}])}^2\\
+    &= \E[\B{x}^2] + 2\E[\B{x}\B{y}] + \E[\B{y}^2] - {\E[\B{x}]}^2 - 2\E[\B{x}]\E[\B{y}] - {\E[\B{y}]}^2\\
+    &= \E[\B{x}^2] - {\E[\B{x}]}^2 + \E[\B{y}^2] - {\E[\B{y}]}^2\\
+    &= \cov{(\B{x})} + \cov{(\B{y})}
+\end{align*}
+
+\section{}
+We have: \(\B{x}\∈\ℝ^D,\ p(\B{x}) = \N(\B{x}|\B{\μ},\B{\Sigma})\) and observe \(\B{\chi} = \{\B{x}_1,\…,\B{x}_N\}\).
+Further it is \(\B{x}_i\sim \N(\B{\μ}, \N{\Sigma})\) and \(\μ\sim \N(\B{\μ}_0,\B{\Sigma}_0)\).
+
+\subsection{}
+The likelihood is:
+\begin{align*}
+    p(\B{\chi}|\B{\μ},\B{\Sigma})
+    &= \Π_{i=0}^N p(\B{x}_i|\B{\μ},\B{\Sigma})\\
+    &= \Π_{i=0}^N \N(\B{x}_i|\B{\μ},\B{\Sigma})\\
+    &= \Π_{i=0}^N {(2\π)}^{-\÷{D}{2}} {|\B{\Sigma}|}^{-\÷{1}{2}} \exp{(-\÷{1}{2} {(\B{x}_i - \B{\μ})}^T \B{\Sigma}^{-1} (\B{x}_i - \B{\μ}))}
+\end{align*}
+
+\subsection{}
+Using Bayes we get the posterior:
+\begin{align*}
+    p(\B{\μ}| \B{\chi},\B{\Sigma},\B{\μ}_0,\B{\Sigma}_0)
+    &= \÷{p(\B{\chi}|\B{\μ},\B{\Sigma}) \· p(\B{\μ}|\B{\μ}_0, \B{\Sigma}_0)}{p(\B{\chi})}\\
+    &\sim \Π_{i=0}^N \N(\B{x}_i|\B{\μ},\B{\Sigma}) \· \N(\B{\μ}_0, \B{\Sigma}_0)\\
+\end{align*}
+
+\subsection{}
+\begin{align*}
+    p(\B{\μ}| \B{\chi},\B{\Sigma},\B{\μ}_0,\B{\Sigma}_0)
+    &\sim \Π_{i=0}^N \N(\B{x}_i|\B{\μ},\B{\Sigma}) \· \N(\B{\μ}_0, \B{\Sigma}_0)\\
+    &\sim \exp{\left[-\÷{1}{2}(\B{\μ}-\B{\μ}_0)^T\B{\Sigma}_0^{-1}(\B{\μ}-\B{\μ}_0)
+                -\÷{1}{2}\Σ_{i=0}^N (\B{x}_i - \B{\μ})^T \B{\Sigma}^{-1} (\B{x}_i - \B{\μ})
+            \right]}\\
+    &\sim \exp{\÷{1}{2}\left[
+                -\B{\μ}^T(\B{\Sigma}_0^{-1}+N\·\B{\Sigma}^{-1})\B{\μ}
+                +2\B{\μ}^T(\B{\Sigma}_0^{-1}\B{\μ}_0 + \B{\Sigma}^{-1}\Σ_{i=0}^N\B{x}_i)
+                -\B{\μ}_0^T\B{\Sigma}_0^{-1}\B{\μ}_0
+                -\Σ_{i=0}^N \B{x}_i^T\B{\Sigma}^{-1}\B{x}_i
+            \right]}\\
+    &\hastoequal \exp\left[ -\B{\μ}^T \B{\Sigma}^{-1}_N \B{\μ} + 2\B{\μ}^T\B{\Sigma}^{-1}_N \B{\μ}_N - \B{\μ}_N^T \B{\Sigma}_N^{-1} \B{\μ}_N \right]\\
+    &\⇒\\
+    \Sigma_N^{-1}
+    &= \B{\Sigma}_0^{-1} + N\·\B{\Sigma}^{-1}\\
+    &\ \wedge\\
+    2\B{\μ}^T(\B{\Sigma}_0^{-1}\B{\μ}_0 + \B{\Sigma}^{-1}\Σ_{i=0}^N \B{x}_i)
+    &= 2\B{\μ}^T\B{\Sigma}_N^{-1}\B{\μ}_N\\
+    \B{\μ}_N
+    &= \B{\Sigma}_N(\B{\Sigma}_0^{-1}\B{\μ}_0 + \B{\Sigma}^{-1}\Σ_{i=0}^N \B{x}_i)
+    \end{align*}
+
+    With both parameters calculated we have the posterior:
+    \begin{align*}
+        p(\B{\μ}| \B{\chi},\B{\Sigma},\B{\μ}_0,\B{\Sigma}_0)
+        &= \N(\B{\μ}_N, \B{\Sigma}_N)\\
+        &= \N(\B{\Sigma}_N(\B{\Sigma}_0^{-1}\B{\μ}_0 + \B{\Sigma}^{-1}\Σ_{i=0}^N \B{x}_i), \÷{1}{\B{\Sigma}_0^{-1} + N\·\B{\Sigma}^{-1}})
+    \end{align*}
+
+\subsection{}
+We are using the log posterior for the MAP estimate:
+\begin{align*}
+    \pf{}{\B{\μ}} \ln p(\B{\μ}| \B{\chi},\B{\Sigma},\B{\μ}_0,\B{\Sigma}_0)
+    &= 0\\
+    &= \pf{}{\B{\μ}}
+    -\÷{ND}{2}\ln{(2\π)} - \÷{N}{2}\ln |\B{\Sigma}| - \÷{1}{2}\Σ_{i=0}^N {(\B{x}_i - \B{\μ})}^T \B{\Sigma}^{-1} {(\B{x}_i - \B{\μ})}\\
+    &\quad\quad\quad -\÷{D}{2}\ln{(2\π)} - \÷{1}{2}\ln |\B{\Sigma}| - \÷{1}{2} {(\B{\μ} - \B{\μ}_0)}^T \B{\Sigma}_0^{-1} {(\B{\μ} - \B{\μ}_0)}\\
+    &= - \Σ_{i=0}^N \B{\Sigma}^{-1} {(\B{x}_i - \B{\μ})} - \B{\Sigma}_0^{-1} {(\B{\μ} - \B{\μ}_0)}\\
+    &= - \B{\Sigma}^{-1} \Σ_{i=0}^N \B{x}_i + N\· \B{\Sigma}^{-1} \B{\μ} - \B{\Sigma}_0^{-1} \B{\μ} + \B{\Sigma}_0^{-1} \B{\μ}_0\\
+    &\⇒\\
+    \B{\μ}_{MAP}
+    &= \÷{-\B{\Sigma}_0^{-1} \B{\μ}_0 + \B{\Sigma}^{-1} \Σ_{i=0}^N \B{x}_i}{N\· \B{\Sigma}^{-1} - \B{\Sigma}_0^{-1}}
+\end{align*}
+
+\section{}
+We have a coin with head-proability of \(\μ\).
+
+\subsection{}
+For this Bernoulli experiment the MLE is:
+\begin{align*}
+    \μ_{ML}
+    &= \÷{\Σ_i^N x_i}{N}\\
+    &= 1
+\end{align*}
+so the probability is 100 per cent.
+
+\subsection{}
+We assume \(\μ\sim \Beta(\μ|,a,b)\):
+\begin{align*}
+    p(\μ|\B{\chi})
+    &= p(\B{\chi}|\μ)p(\μ|a,b)\\
+    &= \Π_{i=0}^N \μ^{x_i}(1-\μ)^{(1-x_i)} \· \÷{\μ^{a-1} (1-\μ)^{b-1}}{B(a,b)}\\
+    &\⇒\\
+    \ln p(\μ|\B{\chi})
+    &= \Σ_{i=0}^N x_i\ln\μ + (1-x_i)\ln{(1-\μ)} + (a-1)\ln \μ + (b-1)\ln(1-\μ) + C\\
+    &\⇒\\
+    \pf{\ln p(\μ|\B{\chi})}{\μ}
+    &= \Σ_{i=0}^N \÷{x_i}{\μ} - \÷{1-x_i}{1 - \μ} + \÷{a-1}{\μ} - \÷{b-1}{1 - \μ}\\
+    &\⇒\\
+    0 &=
+    \÷{\Σ x_i + a - 1}{\μ_{MAP}} - \÷{\Σ(1-x_i) + b-1}{1-\μ_{MAP}}\\
+    \÷{1}{\μ_{MAP}}
+    &= \÷{\Σ (1-x_i) + b-1}{\Σ x_i + a-1} + 1\\
+    \μ_{MAP}
+    &= \÷{\Σ x_i + a - 1}{N+a+b-2}\\
+\end{align*}
+for our case that is:
+\begin{align*}
+    \μ_{MAP}
+    &= \÷{a + 2}{a+b+1}
+\end{align*}
+
+\subsection{}
+Our posterior distribution is also a Beta distribution:
+\begin{align*}
+    p(\μ|\B{\chi}, a,b)
+    &= \÷{p(\B{\chi}|\μ)\·p(\μ|a,b)}{\int_0^1 p(\B{\chi}|\μ)\·p(\μ|a,b) d\μ}\\
+    &= \÷{{m+l\choose m}\μ^m(1-\μ)^l \· \÷{1}{B(a,b)}\μ^{a-1}(1-\μ)^{b-1}}{\int_0^1 {m+l\choose m}\μ^m(1-\μ)^l \·\÷{1}{B(a,b)}\μ^{a-1}(1-\μ)^{b-1} d\μ}\\
+    &= \÷{\μ^m(1-\μ)^l \·\μ^{a-1}(1-\μ)^{b-1}}{\int_0^1 \μ^m(1-\μ)^l \·\μ^{a-1}(1-\μ)^{b-1} d\μ}\\
+    &= \÷{\μ^{m+a-1}(1-\μ)^{l+b-1}}{\int_0^1 \μ^{m+a-1}(1-\μ)^{l+b-1} d\μ}\\
+    &= \÷{\μ^{m+a-1}(1-\μ)^{l+b-1}}{B(m+a, l+b)}\\
+    &= \text{Beta}(m+a, b+l)
+\end{align*}
+Our posterior distribution is a Beta distribution with the prev derived mean:
+\begin{align*}
+    p(\μ|m,l,a,b) &= \text{Beta}(m+a, l+b)\\
+    &\⇒\\
+    \E[p(\μ|m,l,a,b)] &= \÷{m+a}{m+l+a+b}
+\end{align*}
+For prior mean and ML estimate we have:
+\begin{align*}
+    \E[\text{Beta(\μ|a,b)}] &= \÷{a}{a + b}\\
+    \μ_{ML} &= \÷{m}{m+l}
+\end{align*}
+We can form an linear combination to give the posterior mean:
+\begin{align*}
+    \E[p(\μ|m,l,a,b)]
+    &= \÷{a}{m+l+a+b} + \÷{m}{m+l+a+b}\\
+    &= \÷{a+b}{a+b}\÷{a}{m+l+a+b} + \÷{m+l}{m+l}\÷{m}{m+l+a+b}\\
+    &= \E[\text{Beta(\μ|a,b)}]\÷{a+b}{m+l+a+b} + \μ_{ML}\÷{m+l}{m+l+a+b}
+\end{align*}
+Given that \(a+b > 0\) and \(m+l > 0\) and thus both coefficient in \((0,1)\) this shows that the posterior mean is between those two estimates.
+
+\section{}
+Distributions in the exponential family have the form:
+\begin{align*}
+    p(\B{x}|\B{\eta})
+    &= h(\B{x}) \exp{(\B{\φ}(\B{\eta}) \B{T}(\B{x}) - \B{A}(\B{\eta}))}
+\end{align*}
+
+\subsection{}
+\begin{itemize}
+    \item[(i)]
+    \begin{align*}
+        \text{Pois}(k|\λ)
+        &= \÷{\λ^k \exp -\λ}{k!}\\
+        &= \÷{1}{k!} \· \exp\log\λ^k \· \exp -\λ\\
+        &= \÷{1}{k!} \· \exp{(k\log\λ -\λ)}\\
+        &\⇒\\
+        h(x) &= \÷{1}{k!}\\
+        \φ(\eta) &= \log\λ\\
+        T(x) &= k \tag{sufficient statistic}\\
+        A(\eta) &= \λ
+    \end{align*}
+
+    \item[(ii)]
+    \begin{align*}
+        \text{Gam}(\τ|a,b)
+        &= \÷{1}{\Γ(a)} b^a \τ^{a-1} e^{-b\τ}\\
+        &= \exp{(a\log b - \log\Γ(a))} \· \exp{((a-1)\log\τ)} \· \exp{(-b\τ)}\\
+        &= \exp{[ (a-1)\log\τ -b\τ - (\log\Γ(a) - a\log b) ]}\\
+        &\⇒\\
+        h(x) &= 1\\
+        \φ(\eta) &= \bM{a-1\\-b}\\
+        T(x) &= \bM{\log\τ\\\τ} \tag{sufficient statistic}\\
+        A(\eta) &= \log\Γ(a) - a\log(b)
+    \end{align*}
+
+    \item[(iii)]
+    \begin{align*}
+        \text{Cauchy}(x|\γ,\μ)
+        &= \÷{1}{\π\γ} \÷{1}{1+ {(\÷{x-\μ}{\γ})}^2}
+    \end{align*}
+    Because of the \(1 + \) in the denominator the Cauchy distribution can not be factorized into a canonical form of the exponential family.
+    Thus it is not part of it.
+
+    \item[(iv)]
+    \begin{align*}
+        \text{vonMises}(x|\κ,\μ)
+        &= \÷{1}{2\π I_0(\κ)}\exp{(\κ\cos{(x-\μ)})}\\
+        &= \exp{(\cos{(x-\μ)}\κ)} \· \exp{(-\log{(2\π I_0(\κ))})}\\
+        &= \exp{(\κ(\cos\μ\cos x + \sin\μ\sin x) - \log{(2\π I_0(\κ))})}\\
+        &\⇒\\
+        h(x) &= 1\\
+        \φ(\eta) &= \bM{\κ\cos\μ\\\κ\sin\μ}\\
+        T(x) &= \bM{\cos x\\\sin x} \tag{sufficient statistic}\\
+        A(\eta) &= \log{(2\π I_0(\κ))}
+    \end{align*}
+\end{itemize}
+
+\subsection{}
+\begin{itemize}
+    \item[(i)]
+    \begin{align*}
+        \E[\text{Pois(k|\λ)}]
+        &= \Σ_{k=0}^\infty k e^{-\λ}\÷{\λ^k}{k!}\\
+        &= e^{-\λ} \Σ_{k=0}^\infty k\·\÷{\λ^k}{k!}\\
+        &= e^{-\λ} \Σ_{k=0}^\infty k\·\÷{\λ\·\λ^{(k-1)}}{k\·(k-1)!}\\
+        &= \λ e^{-\λ} \Σ_{k=0}^\infty \÷{\λ^{(k-1)}}{(k-1)!}\\
+        &= \λ e^{-\λ} \exp\λ\\
+        &= \λ\\
+    \end{align*}
+    \begin{align*}
+        \E[{(\text{Pois}(k|\λ) - \λ)}^2]
+        &= e^{-\λ} \Σ_{k=0}^\infty {(k-\λ)}^2 \÷{\λ^k}{k!}\\
+        &= e^{-\λ} \Σ_{k=0}^\infty (k^2 - 2k\λ + \λ^2) \÷{\λ^k}{k!}\\
+        &= e^{-\λ} ((\λ^2+\λ)e^\λ - 2\λ^2 e^\λ + \λ^2 e^\λ)\\
+        &= \λ
+    \end{align*}
+    \item[(ii)]
+    \begin{align*}
+        \E[\text{Gam}(\τ|a,b)]
+        &= \÷{b^a}{\Γ(a)} \· \int_0^\infty \τ\·\τ^{a-1}e^{-b\τ}d\τ\\
+        &= \÷{b^a}{\Γ(a)} \· \int_0^\infty \τ^a e^{-b\τ}d\τ\\
+        &= \÷{b^a}{\Γ(a)} \· \int_0^\infty {(\÷{\τ}{b})}^a e^{-\τ}\÷{1}{b}d\÷{\τ}{b}\\
+        &= \÷{b^a}{\Γ(a)} \· \÷{1}{b^{a+1}} \int_0^\infty \τ^a e^{-\τ}d\÷{\τ}{b}\\
+        &= \÷{1}{\Γ(a)} \· \÷{1}{b} \·\Γ(a+1)\\
+        &= \÷{1}{\Γ(a)} \· \÷{1}{b} \· a\·\Γ(a)\\
+        &= \÷{a}{b}
+    \end{align*}
+    \begin{align*}
+        \var(\text{Gam}(\τ|a,b))
+        &= \E[{(\text{Gam}(\τ|a,b) - \÷{a}{b})}^2]\\
+        &= \÷{b^a}{\Γ(a)} \· \int_0^\infty {(\τ - \÷{a}{b})}^2\·\τ^{a-1}e^{-b\τ}d\τ\\
+        &= \÷{b^a}{\Γ(a)} \· \left[\int_0^\infty \τ^{a+2-1}e^{-\τ}\÷{1}{b^{a+2}}d\÷{\τ}{b} - 2\÷{a}{b}\int_0^\infty \τ^{a+1-1}e^{-\τ}\÷{1}{b^{a+1}}d\÷{\τ}{b}\right.\\
+        &\left.\quad\quad\quad\quad + {(\÷{a}{b})}^2\int_0^\infty \τ^{a-1}e^{-\τ}\÷{1}{b^a}d\÷{\τ}{b}\right]\\
+        &= \÷{b^a}{\Γ(a)} \· \left[\÷{\Γ(a+2)}{b^{a+2}} - 2\÷{a\·\Γ(a+1)}{b\·b^{a+1}} + \÷{a^2\·\Γ(a)}{b^2\·b^a}\right]\\
+        &= \÷{b^a}{\Γ(a)} \· \left[\÷{(a^2 + a)\Γ(a)}{b^{a+2}} - 2\÷{a^2\·\Γ(a)}{b^{a+2}} + \÷{a^2\·\Γ(a)}{b^{a+2}}\right]\\
+        &= \÷{a}{b^2}
+    \end{align*}
+\end{itemize}
+
+\subsection{}
+Every member of the exponential family has a conjugate prior as such also the Poisson distribution.
+The conjugate prior to a Poisson is a Gamma which we can show by computing the posterior:
+\begin{align*}
+    p(\λ|k,a,b)
+    &= \÷{p(k|\λ)\·p(\λ|a,b)}{\int p(k)}\\
+    &= \÷{\÷{\λ^k e^{-\λ}}{k!} \÷{1}{\Γ(a)}b^a\λ^{a-1}e^{-b\λ}}{\int \÷{{\λ^*}^k e^{-\λ^*}}{k!} \÷{1}{\Γ(a)}b^a{\λ^*}^{a-1}e^{-b\λ^*} d\λ^*}\\
+    &= \÷{\λ^{a+k-1}e^{-(b+1)\λ}}{\int {\λ^*}^{a+k-1}e^{-(b+1)\λ^*} d\λ^*}\\
+    &= \÷{\λ^{a+k-1}e^{-(b+1)\λ}}{\int {(\÷{{\λ^*}}{b+1})}^{a+k-1}e^{-\λ^*} \÷{1}{b+1} d\÷{\λ^*}{b+1}}\\
+    &= \÷{\λ^{a+k-1}e^{-(b+1)\λ}}{\÷{1}{{(b+1)}^{a+k}}\int {\λ^*}^{a+k-1}e^{-\λ^*} d\÷{\λ^*}{b+1}}\\
+    &= \÷{{(b+1)}^{a+k}}{\Γ(a+k)} \· \λ^{a+k-1}e^{-(b+1)\λ}\\
+    &= \text{Gamma}(a+k, b+1)
+\end{align*}
+
+\end{document}
