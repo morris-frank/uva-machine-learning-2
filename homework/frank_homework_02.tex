@@ -1,5 +1,7 @@
 \documentclass{article}
 \usepackage{morris}
+\usepackage{diagbox}
+\usepackage{tikz}
 
 \renewcommand{\thesection}{Problem \arabic{section}.}
 \renewcommand{\thesubsection}{\arabic{subsection}.}
@@ -20,30 +22,132 @@
 We have the discrete random variables \(X, Y, Z\).
 Mutual information than is:
 \begin{align*}
-    I(X;y)
-    &=
+    I(X;Y)
+    &= KL(p(x,y)||p(x)p(y))\\
+    &= H(X) - H(X|Y)
 \end{align*}
 
 The conditional mutual information is:
 \begin{align*}
     I(X;Y|Z)
-    &=
+    &= \E_{p(z)}[KL(p(x,y|z)||p(x|y)p(y|z))]\\
+    &= H(X|Z) - H(X|Y,Z)
 \end{align*}
+
+We see that the conditional mutual information measures the expected mutual information between \(X\) and \(Y\) given \(Z\).
 
 \subsection{}
 We have \(x,y,z\∈\{0,1\}\) with \(p(x,y,z)\).
+First we will write down \(p(x,y)\) (see Table~\ref{tab:margin_z}), \(p(x)\) and \(p(y)\) (see Table~\ref{tab:margin_y_x}).
+
+\begin{table}
+    \centering
+    \begin{tabular}{ccc}
+        X & Y & p(x,y)\\\toprule
+        0 & 0 & 0.336\\
+        0 & 1 & 0.264\\
+        1 & 0 & 0.256\\
+        1 & 1 & 0.144
+    \end{tabular}
+    \caption{Marginalizing Z.}
+    \label{tab:margin_z}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{c|cc|c}
+        \diagbox{X}{Y} & 0 & 1 & p(x)\\\hline
+        0 & 0.336 & 0.264 & 0.6\\
+        1 & 0.256 & 0.144 & 0.4\\\hline
+        p(y) & 0.592 & 0.408 & 1
+    \end{tabular}
+    \caption{Marginalizing X and Y.}
+    \label{tab:margin_y_x}
+\end{table}
+
 \begin{align*}
     I(X;Y)
-    &=
+    &= KL(p(x,y)||p(x)p(y))\\
+    &= -\Σ_{x,y} p(x,y)\ln{(\÷{p(x)p(y)}{p(x,y)})}\\
+    &= 3.197\·10^{-3}\\
+    &> 0
 \end{align*}
 
+As the mutual information between \(X\) and \(Y\) is bigger than zero (it is symmetric!) we showed that having knowledge about one of the values we gain knowledge about the possible distribution of values of the second variable.
+We see this with \(I(X;Y) = H(X) - H(X|Y) > 0 \⇒ H(X|Y) < H(X)\), the entropy of one given the other is lower than without this conditional information.
+
 \subsection{}
+
+\begin{table}
+    \centering
+    \begin{tabular}{cccc}
+        \diagbox{x}{y} & 0 & 1 & p(x|z=0)\\\hline
+        0 & 0.4 & 0.1 & 0.5\\
+        1 & 0.4 & 0.1 & 0.5\\
+        p(y|z=0) & 0.8 & 0.2 & 1.0
+    \end{tabular}
+    \caption{p(x,y|z=0) and p(x|z=0), p(y|z=0)}
+    \label{tab:xyz0}
+\end{table}
+\begin{table}
+    \centering
+    \begin{tabular}{cccc}
+        \diagbox{x}{y} & 0 & 1 & p(x|z=1)\\\hline
+        0 & 0.277 & 0.415 & 0.692\\
+        1 & 0.123 & 0.185 & 0.308\\
+        p(y|z=1) & 0.4 & 0.6 & 1.0
+    \end{tabular}
+    \caption{p(x,y|z=1) and p(x|z=1), p(y|z=1)}
+    \label{tab:xyz1}
+\end{table}
+
+See Table~\ref{tab:xyz0} and Table~\ref{tab:xyz1} for intermediate calculation tables.
+
 \begin{align*}
     I(X;Y|Z)
-    &=
+    &=\hspace{0.8em} p(z=0)\·KL(p(x,y|z=0)||p(x|z=0)p(y|z=0))\\
+    &\quad + p(z=1)\·KL(p(x,y|z=1)||p(x|z=1)p(y|z=1))\\
+    &= -\Σ_{z\∈ Z}p(Z=z)\·\Σ_{x,y}p(x,y|z)\·\log{(\÷{p(x|z)p(y|z)}{p(x,y|z)})}\\
+    &= -(0.48\·0 + 0.52\·0)\\
+    &= 0
 \end{align*}
 
+That now the conditional mutual information is zero tells us that given that we know about the value of \(Z\) than having information about \(X\) or \(Y\) will not tell us anything about the respective third variable.
+\(I(X;Y|Z) = 0\⇒ H(X|Z) = H(X|Y,Z) \wedge H(Y|Z) = H(Y|X,Z)\).
+
 \subsection{}
+For the Computation of \(p(x)\·p(z|x)\·p(y|z) = p(x,y,z)\) see Table~\ref{tab:lastxyz}.
+The directed graph is show in Figure~\ref{fig:graph}.
+
+\begin{table}
+    \centering
+    \begin{tabular}{lllllll}
+        \(x\) & \(p(x)\) & \(z\) & \(p(z|x)\) & \(y\) & \(p(y|z)\) & \(p(x)\·p(z|x)\·p(y|z)\)\\\toprule
+        0 & 0.6 & 0 & 0.4 & 0 & 0.8 & 0.192\\
+        0 & 0.6 & 0 & 0.4 & 1 & 0.2 & 0.048\\
+        0 & 0.6 & 1 & 0.6 & 0 & 0.4 & 0.144\\
+        0 & 0.6 & 1 & 0.6 & 1 & 0.6 & 0.216\\
+        1 & 0.4 & 0 & 0.6 & 0 & 0.8 & 0.192\\
+        1 & 0.4 & 0 & 0.6 & 1 & 0.2 & 0.048\\
+        1 & 0.4 & 1 & 0.4 & 0 & 0.4 & 0.064\\
+        1 & 0.4 & 1 & 0.4 & 1 & 0.6 & 0.096\\
+    \end{tabular}
+    \caption{Computation of \(p(x)\·p(z|x)\·p(y|z)\)}
+    \label{tab:lastxyz}
+\end{table}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \path (0,0) node[circle,draw](x) {X}
+            (2,0) node[circle,draw](z) {Z}
+            (4,0) node[circle,draw](y) {Y};
+        \draw[->] (x) -- (z);
+        \draw[->] (z) -- (y);
+    \end{tikzpicture}
+    \caption{The directed graph to the factorization \(p(x)p(z|x)p(y|z)\)}
+    \label{fig:graph}
+\end{figure}
 
 
 \section{}
