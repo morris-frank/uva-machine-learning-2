@@ -220,7 +220,38 @@ See Figures~\ref{tikz:bay_first} until \ref{tikz:bay_last}.
 
 \section{}
 \subsection{}
+We have given \(p(\B{x}) = \N(\B{x}|\B{\μ},\B{\Sigma})\) and \(q(\B{x}) = \N(\B{x}|\B{m},\B{L})\). \(\B{x}\∈\ℝ^k\).
+
+\begin{align*}
+    \ln q(\B{x})
+    &= -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}|\B{L}| - \÷{1}{2}(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})\\
+    \KL(p||q)
+    &= -\int p(\B{x}) \ln{(\÷{q(\B{x})}{p(\B{x})})} d\B{x}\\
+    &= -\int p(\B{x}) \left[\ln q(\B{x}) - \ln p(\B{x}) \right]d\B{x}\\
+    &= \int p(\B{x})\ln p(\B{x}) d\B{x} - \int p(\B{x})\ln q(\B{x})d\B{x}\\
+    &= -\mathcal{H}(p(\B{X})) - \int p(\B{x})\ln q(\B{x})d\B{x}\\
+    &= -\mathcal{H}(p(\B{X})) +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
+    &= -\÷{k}{2} -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}\ln |\B{\Sigma}| +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
+    &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2}\int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
+    &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} \E[(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})]_{p(\B{x})}\\
+    &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} [(\B{\μ} - \B{m})^T\B{L}^{-1}(\B{\μ} - \B{m}) + \Tr{(\B{L}^{-1}\B{\Sigma})}]\\
+    &= \÷{1}{2} \left[\÷{|\B{L}|}{|\B{\Sigma}|} -k +(\B{\μ} - \B{m})^T\B{L}^{-1}(\B{\μ} - \B{m}) +\Tr{(\B{L}^{-1}\B{\Sigma})}\right]\\
+\end{align*}
 
 \subsection{}
+\begin{align*}
+    \ln p(\B{x})
+    &= -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}|\B{\Sigma}| - \÷{1}{2}(\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ})\\
+    \mathcal{H}(p)
+    &= -\int p(\B{x})\ln p(\B{x})d\B{x}\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\E_{p(\B{x})}\left[(\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ})\right]\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\E_{p(\B{x})}\left[\Tr((\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ}))\right]\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\E_{p(\B{x})}\left[\Tr(\B{\Sigma}^{-1}(\B{x} - \B{\μ})^T(\B{x} - \B{\μ}))\right]\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr\left(\B{\Sigma}^{-1}\E_{p(\B{x})}\left[(\B{x} - \B{\μ})^T(\B{x} - \B{\μ})\right]\right)\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr\left(\B{\Sigma}^{-1}\E_{p(\B{x})}\left[\B{\Sigma}\right]\right)\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr\left(\B{\Sigma}^{-1}\B{\Sigma}\right)\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr\left(\1_k\right)\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{k}{2}\\
+\end{align*}
 
 \end{document}
