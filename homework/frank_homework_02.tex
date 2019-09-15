@@ -1,7 +1,11 @@
 \documentclass{article}
 \usepackage{morris}
 \usepackage{diagbox}
+\usepackage{centernot}
 \usepackage{tikz}
+
+\newcommand{\indep}{\mathrel{\text{\scalebox{1.07}{$\perp\mkern-10mu\perp$}}}}
+\newcommand{\nindep}{\centernot{\indep}}
 
 \renewcommand{\thesection}{Problem \arabic{section}.}
 \renewcommand{\thesubsection}{\arabic{subsection}.}
@@ -23,15 +27,15 @@ We have the discrete random variables \(X, Y, Z\).
 Mutual information than is:
 \begin{align*}
     I(X;Y)
-    &= KL(p(x,y)||p(x)p(y))\\
-    &= H(X) - H(X|Y)
+    &= \KL(p(x,y)||p(x)p(y))\\
+    &= \mathcal{H}(X) - \mathcal{H}(X|Y)
 \end{align*}
 
 The conditional mutual information is:
 \begin{align*}
     I(X;Y|Z)
-    &= \E_{p(z)}[KL(p(x,y|z)||p(x|y)p(y|z))]\\
-    &= H(X|Z) - H(X|Y,Z)
+    &= \E_{p(z)}[\KL(p(x,y|z)||p(x|y)p(y|z))]\\
+    &= \mathcal{H}(X|Z) - \mathcal{H}(X|Y,Z)
 \end{align*}
 
 We see that the conditional mutual information measures the expected mutual information between \(X\) and \(Y\) given \(Z\).
@@ -67,14 +71,14 @@ First we will write down \(p(x,y)\) (see Table~\ref{tab:margin_z}), \(p(x)\) and
 
 \begin{align*}
     I(X;Y)
-    &= KL(p(x,y)||p(x)p(y))\\
+    &= \KL(p(x,y)||p(x)p(y))\\
     &= -\Σ_{x,y} p(x,y)\ln{(\÷{p(x)p(y)}{p(x,y)})}\\
     &= 3.197\·10^{-3}\\
     &> 0
 \end{align*}
 
 As the mutual information between \(X\) and \(Y\) is bigger than zero (it is symmetric!) we showed that having knowledge about one of the values we gain knowledge about the possible distribution of values of the second variable.
-We see this with \(I(X;Y) = H(X) - H(X|Y) > 0 \⇒ H(X|Y) < H(X)\), the entropy of one given the other is lower than without this conditional information.
+We see this with \(I(X;Y) = \mathcal{H}(X) - \mathcal{H}(X|Y) > 0 \⇒ \mathcal{H}(X|Y) < \mathcal{H}(X)\), the entropy of one given the other is lower than without this conditional information.
 
 \subsection{}
 
@@ -105,15 +109,15 @@ See Table~\ref{tab:xyz0} and Table~\ref{tab:xyz1} for intermediate calculation t
 
 \begin{align*}
     I(X;Y|Z)
-    &=\hspace{0.8em} p(z=0)\·KL(p(x,y|z=0)||p(x|z=0)p(y|z=0))\\
-    &\quad + p(z=1)\·KL(p(x,y|z=1)||p(x|z=1)p(y|z=1))\\
+    &=\hspace{0.8em} p(z=0)\·\KL(p(x,y|z=0)||p(x|z=0)p(y|z=0))\\
+    &\quad + p(z=1)\·\KL(p(x,y|z=1)||p(x|z=1)p(y|z=1))\\
     &= -\Σ_{z\∈ Z}p(Z=z)\·\Σ_{x,y}p(x,y|z)\·\log{(\÷{p(x|z)p(y|z)}{p(x,y|z)})}\\
     &= -(0.48\·0 + 0.52\·0)\\
     &= 0
 \end{align*}
 
 That now the conditional mutual information is zero tells us that given that we know about the value of \(Z\) than having information about \(X\) or \(Y\) will not tell us anything about the respective third variable.
-\(I(X;Y|Z) = 0\⇒ H(X|Z) = H(X|Y,Z) \wedge H(Y|Z) = H(Y|X,Z)\).
+\(I(X;Y|Z) = 0\⇒ \mathcal{H}(X|Z) = \mathcal{H}(X|Y,Z) \wedge \mathcal{H}(Y|Z) = \mathcal{H}(Y|X,Z)\).
 
 \subsection{}
 For the Computation of \(p(x)\·p(z|x)\·p(y|z) = p(x,y,z)\) see Table~\ref{tab:lastxyz}.
@@ -151,7 +155,68 @@ The directed graph is show in Figure~\ref{fig:graph}.
 
 
 \section{}
+We strictly plot not the permutated directed graphs.
+See Figures~\ref{tikz:bay_first} until \ref{tikz:bay_last}.
 
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \path (0,0) node[circle,draw](x) {X} (-1, -1) node[circle,draw](y) {Y} (1, -1) node[circle,draw](z) {Z};
+        \draw (0, -2) node[draw] {$X\indep Y \wedge X\indep Z \wedge Y\indep Z$};
+    \end{tikzpicture}
+    \label{tikz:bay_first}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \path (0,0) node[circle,draw](x) {X} (-1, -1) node[circle,draw](y) {Y} (1, -1) node[circle,draw](z) {Z};
+        \draw[->] (x) -- (y);
+        \draw (0, -2) node[draw] {$X\nindep Y \wedge X\indep Z \wedge Y\indep Z$};
+    \end{tikzpicture}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \path (0,0) node[circle,draw](x) {X} (-1, -1) node[circle,draw](y) {Y} (1, -1) node[circle,draw](z) {Z};
+        \draw[->] (x) -- (y);
+        \draw[->] (x) -- (z);
+        \draw (0, -2) node[draw] {$X\nindep Y \wedge X\nindep Z \wedge Y\indep Z$};
+    \end{tikzpicture}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \path (0,0) node[circle,draw](x) {X} (-1, -1) node[circle,draw](y) {Y} (1, -1) node[circle,draw](z) {Z};
+        \draw[->] (x) -- (y);
+        \draw[->] (z) -- (x);
+        \draw (0, -2) node[draw] {$X\nindep Z \wedge X\nindep Y \wedge Y\nindep Z \wedge Y\indep Z|X$};
+    \end{tikzpicture}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \path (0,0) node[circle,draw](x) {X} (-1, -1) node[circle,draw](y) {Y} (1, -1) node[circle,draw](z) {Z};
+        \draw[->] (y) -- (x);
+        \draw[->] (z) -- (x);
+        \draw (0, -2) node[draw] {$X\nindep Y \wedge X\nindep Z \wedge Y\indep Z \wedge Y\nindep Z|X$};
+    \end{tikzpicture}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \path (0,0) node[circle,draw](x) {X} (-1, -1) node[circle,draw](y) {Y} (1, -1) node[circle,draw](z) {Z};
+        \draw[->] (x) -- (y);
+        \draw[->] (y) -- (z);
+        \draw[->] (z) -- (x);
+        \draw (0, -2) node[draw] {$X\nindep Y \wedge X\nindep Z \wedge Y\nindep Z$};
+    \end{tikzpicture}
+    \label{tikz:bay_last}
+\end{figure}
 
 \section{}
 \subsection{}
