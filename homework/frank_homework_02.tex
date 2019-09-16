@@ -158,6 +158,20 @@ The directed graph is show in Figure~\ref{fig:graph}.
 We strictly plot not the permutated directed graphs.
 See Figures~\ref{fig:bay_first} until \ref{fig:bay_last} for the plotted clusters.
 Any not written conditional relationship is independent.
+As for the definition of permutation consider the graph in Figure~\ref{fig:bay_exp}.
+This is the same graph as in Figure~\ref{fig:bay_second} as we can permute the variable names:
+\(X\rightarrow Y \wedge Z\rightarrow X \wedge Y\rightarrow Z\).
+This is a permutation and proves that those two clusters are the same.
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \path (0,0) node[circle,draw](x) {X} (-1, -1) node[circle,draw](y) {Y} (1, -1) node[circle,draw](z) {Z};
+        \draw[->] (z) -- (x);
+    \end{tikzpicture}
+    \caption{Example DAG}
+    \label{fig:bay_exp}
+\end{figure}
 
 \begin{figure}
     \centering
@@ -177,6 +191,7 @@ Any not written conditional relationship is independent.
         \draw (0, -2) node[draw] {$X\nindep Y \wedge X\indep Z \wedge Y\indep Z$};
     \end{tikzpicture}
     \caption{Cluster II}%
+    \label{fig:bay_second}
 \end{figure}
 
 \begin{figure}
@@ -189,7 +204,7 @@ Any not written conditional relationship is independent.
         \draw[->] (x2) -- (y2);
         \draw[->] (x2) -- (z2);
 
-        \draw (0, -2) node[draw] {$X\nindep Z \wedge X\nindep Y \wedge Y\nindep Z \wedge Y\indep Z|X$};
+        \draw (0, -2) node[draw] {$X\nindep Z \wedge X\nindep Y \wedge Y\nindep Z|\emptyset \wedge Y\indep Z|X$};
     \end{tikzpicture}
     \caption{Cluster III}%
 \end{figure}
@@ -225,14 +240,14 @@ We are using the result of Section~\ref{sub:last} in this computation.
 
 \begin{align*}
     \ln q(\B{x})
-    &= -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}|\B{L}| - \÷{1}{2}(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})\\
+    &= -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}\ln|\B{L}| - \÷{1}{2}(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})\\
     \KL(p||q)
     &= -\int p(\B{x}) \ln{(\÷{q(\B{x})}{p(\B{x})})} d\B{x}\\
     &= -\int p(\B{x}) \left[\ln q(\B{x}) - \ln p(\B{x}) \right]d\B{x}\\
     &= \int p(\B{x})\ln p(\B{x}) d\B{x} - \int p(\B{x})\ln q(\B{x})d\B{x}\\
     &= -\mathcal{H}(p(\B{X})) - \int p(\B{x})\ln q(\B{x})d\B{x}\\
-    &= -\mathcal{H}(p(\B{X})) +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
-    &= -\÷{k}{2} -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}\ln |\B{\Sigma}| +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
+    &= -\mathcal{H}(p(\B{X})) +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}\ln|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
+    &= -\÷{k}{2} -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}\ln |\B{\Sigma}| +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}\ln|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
     &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2}\int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
     &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} \E[(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})]_{p(\B{x})}\tag{using (1)}\\
     &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} [(\B{\μ} - \B{m})^T\B{L}^{-1}(\B{\μ} - \B{m}) + \Tr{(\B{L}^{-1}\B{\Sigma})}]\\
@@ -243,13 +258,13 @@ We are using the result of Section~\ref{sub:last} in this computation.
 \label{sub:last}
 \begin{align*}
     \ln p(\B{x})
-    &= -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}|\B{\Sigma}| - \÷{1}{2}(\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ})\\
+    &= -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}\ln|\B{\Sigma}| - \÷{1}{2}(\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ})\\
     \mathcal{H}(p)
     &= -\int p(\B{x})\ln p(\B{x})d\B{x}\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\E_{p(\B{x})}\left[(\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ})\right]\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\left[{(\B{\μ} - \B{\μ})}^T\B{\Sigma}^{-1}(\B{\μ} - \B{\μ}) + \Tr{(\B{\Sigma}^{-1}\B{\Sigma})}\right]\tag{using (1)}\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr{(\1_k)}\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{k}{2}\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}\ln|\B{\Sigma}| +\÷{1}{2}\E_{p(\B{x})}\left[(\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ})\right]\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}\ln|\B{\Sigma}| +\÷{1}{2}\left[{(\B{\μ} - \B{\μ})}^T\B{\Sigma}^{-1}(\B{\μ} - \B{\μ}) + \Tr{(\B{\Sigma}^{-1}\B{\Sigma})}\right]\tag{using (1)}\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}\ln|\B{\Sigma}| +\÷{1}{2}\Tr{(\1_k)}\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}\ln|\B{\Sigma}| +\÷{k}{2}\\
 \end{align*}
 
 \end{document}
