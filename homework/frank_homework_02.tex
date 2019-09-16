@@ -156,7 +156,8 @@ The directed graph is show in Figure~\ref{fig:graph}.
 
 \section{}
 We strictly plot not the permutated directed graphs.
-See Figures~\ref{fig:bay_first} until \ref{fig:bay_last}.
+See Figures~\ref{fig:bay_first} until \ref{fig:bay_last} for the plotted clusters.
+Any not written conditional relationship is independent.
 
 \begin{figure}
     \centering
@@ -220,6 +221,7 @@ See Figures~\ref{fig:bay_first} until \ref{fig:bay_last}.
 \section{}
 \subsection{}
 We have given \(p(\B{x}) = \N(\B{x}|\B{\μ},\B{\Sigma})\) and \(q(\B{x}) = \N(\B{x}|\B{m},\B{L})\). \(\B{x}\∈\ℝ^k\).
+We are using the result of Section~\ref{sub:last} in this computation.
 
 \begin{align*}
     \ln q(\B{x})
@@ -232,24 +234,21 @@ We have given \(p(\B{x}) = \N(\B{x}|\B{\μ},\B{\Sigma})\) and \(q(\B{x}) = \N(\B
     &= -\mathcal{H}(p(\B{X})) +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
     &= -\÷{k}{2} -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}\ln |\B{\Sigma}| +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
     &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2}\int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
-    &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} \E[(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})]_{p(\B{x})}\\
+    &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} \E[(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})]_{p(\B{x})}\tag{using (1)}\\
     &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} [(\B{\μ} - \B{m})^T\B{L}^{-1}(\B{\μ} - \B{m}) + \Tr{(\B{L}^{-1}\B{\Sigma})}]\\
     &= \÷{1}{2} \left[\÷{|\B{L}|}{|\B{\Sigma}|} -k +(\B{\μ} - \B{m})^T\B{L}^{-1}(\B{\μ} - \B{m}) +\Tr{(\B{L}^{-1}\B{\Sigma})}\right]\\
 \end{align*}
 
-\subsection{}
+\subsection{}%
+\label{sub:last}
 \begin{align*}
     \ln p(\B{x})
     &= -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}|\B{\Sigma}| - \÷{1}{2}(\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ})\\
     \mathcal{H}(p)
     &= -\int p(\B{x})\ln p(\B{x})d\B{x}\\
     &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\E_{p(\B{x})}\left[(\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ})\right]\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\E_{p(\B{x})}\left[\Tr((\B{x} - \B{\μ})^T\B{\Sigma}^{-1}(\B{x} - \B{\μ}))\right]\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\E_{p(\B{x})}\left[\Tr(\B{\Sigma}^{-1}(\B{x} - \B{\μ})^T(\B{x} - \B{\μ}))\right]\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr\left(\B{\Sigma}^{-1}\E_{p(\B{x})}\left[(\B{x} - \B{\μ})^T(\B{x} - \B{\μ})\right]\right)\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr\left(\B{\Sigma}^{-1}\E_{p(\B{x})}\left[\B{\Sigma}\right]\right)\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr\left(\B{\Sigma}^{-1}\B{\Sigma}\right)\\
-    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr\left(\1_k\right)\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\left[{(\B{\μ} - \B{\μ})}^T\B{\Sigma}^{-1}(\B{\μ} - \B{\μ}) + \Tr{(\B{\Sigma}^{-1}\B{\Sigma})}\right]\tag{using (1)}\\
+    &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{1}{2}\Tr{(\1_k)}\\
     &= \÷{k}{2}\ln{(2\π)} +\÷{1}{2}|\B{\Sigma}| +\÷{k}{2}\\
 \end{align*}
 
