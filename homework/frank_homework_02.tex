@@ -248,10 +248,10 @@ We are using the result of Section~\ref{sub:last} in this computation.
     &= -\mathcal{H}(p(\B{X})) - \int p(\B{x})\ln q(\B{x})d\B{x}\\
     &= -\mathcal{H}(p(\B{X})) +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}\ln|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
     &= -\÷{k}{2} -\÷{k}{2}\ln{(2\π)} -\÷{1}{2}\ln |\B{\Sigma}| +\÷{k}{2}\ln{(2\π)} + \÷{1}{2}\ln|\B{L}| +\÷{1}{2} \int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
-    &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2}\int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
-    &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} \E[(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})]_{p(\B{x})}\tag{using (1)}\\
-    &= -\÷{k}{2} +\÷{1}{2}\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} [(\B{\μ} - \B{m})^T\B{L}^{-1}(\B{\μ} - \B{m}) + \Tr{(\B{L}^{-1}\B{\Sigma})}]\\
-    &= \÷{1}{2} \left[\÷{|\B{L}|}{|\B{\Sigma}|} -k +(\B{\μ} - \B{m})^T\B{L}^{-1}(\B{\μ} - \B{m}) +\Tr{(\B{L}^{-1}\B{\Sigma})}\right]\\
+    &= -\÷{k}{2} +\÷{1}{2}\ln\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2}\int p(\B{x})(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})d\B{x}\\
+    &= -\÷{k}{2} +\÷{1}{2}\ln\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} \E[(\B{x} - \B{m})^T\B{L}^{-1}(\B{x} - \B{m})]_{p(\B{x})}\tag{using (1)}\\
+    &= -\÷{k}{2} +\÷{1}{2}\ln\÷{|\B{L}|}{|\B{\Sigma}|} +\÷{1}{2} [(\B{\μ} - \B{m})^T\B{L}^{-1}(\B{\μ} - \B{m}) + \Tr{(\B{L}^{-1}\B{\Sigma})}]\\
+    &= \÷{1}{2} \left[\ln\÷{|\B{L}|}{|\B{\Sigma}|} -k +(\B{\μ} - \B{m})^T\B{L}^{-1}(\B{\μ} - \B{m}) +\Tr{(\B{L}^{-1}\B{\Sigma})}\right]\\
 \end{align*}
 
 \subsection{}%
