@@ -156,11 +156,11 @@ The signals are independent with respect to time.
     p(x_{2t}|\υ_1,v_2,A_2,\σ_2)
     p(x_{3t}|\υ_1,v_2,A_3,\σ_3)\\
     &= \Π_{t=1}^T
-    \mathcal{T}(0,\υ_1)
-    \mathcal{T}(0,\υ_2)\\
-    &\quad\quad\·\left(\Σ_{i=1}^2 A_{1i} \mathcal{T}(0,\υ_i) + \N(0,\σ_1^2)\right)\\
-    &\quad\quad\·\left(\Σ_{i=1}^2 A_{2i} \mathcal{T}(0,\υ_i) + \N(0,\σ_2^2)\right)\\
-    &\quad\quad\·\left(\Σ_{i=1}^2 A_{3i} \mathcal{T}(0,\υ_i) + \N(0,\σ_3^2)\right)\\
+    \mathcal{T}(s_{1t}|0,\υ_1)
+    \mathcal{T}(s_{2t}|0,\υ_2)\\
+    &\quad\quad\·\left(\Σ_{i=1}^2 A_{1i} \mathcal{T}(s_{it}|0,\υ_i) + \N(\ε_{1t}|0,\σ_1^2)\right)\\
+    &\quad\quad\·\left(\Σ_{i=1}^2 A_{2i} \mathcal{T}(s_{it}|0,\υ_i) + \N(\ε_{2t}|0,\σ_2^2)\right)\\
+    &\quad\quad\·\left(\Σ_{i=1}^2 A_{3i} \mathcal{T}(s_{it}|0,\υ_i) + \N(\ε_{3t}|0,\σ_3^2)\right)\\
 \end{align*}
 
 \subsection{}
