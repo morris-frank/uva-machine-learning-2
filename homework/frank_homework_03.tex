@@ -1,0 +1,269 @@
+\documentclass{article}
+\usepackage{morris}
+\usepackage{diagbox}
+\usepackage{centernot}
+\usepackage{tikz}
+\usepackage{enumerate}
+
+\newcommand{\indep}{\mathrel{\text{\scalebox{1.07}{\ensuremath{\perp\mkern-10mu\perp}}}}}
+\newcommand{\nindep}{\centernot{\indep}}
+
+\renewcommand{\thesection}{Problem \arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\alph{subsubsection})}
+
+\title{Machine Learning 2 --- Homework 3}
+\author{%
+  Maurice Frank\\
+  11650656\\
+  \href{mailto:maurice.frank@posteo.de}{maurice.frank@posteo.de}
+}
+
+\begin{document}
+\maketitle
+
+\section{}
+\subsection{}
+\begin{align*}
+    H(X,Y)
+    &= \E_{p(x,y)}[-\log p(x,y)]\\
+    &= \iint_{X,Y} p(x,y) -\log p(x,y) dxdy\\
+    &= -\iint_{X,Y} p(x,y) \· \log p(x)p(y|x) dxdy\\
+    &= -\int_X p(x)\·\log p(x) \int_Y p(y|x) dydx  -\iint_{X,Y} p(x,y)\log p(y|x) dxdy\\
+    &= -\int_X p(x)\·\log p(x) dx  -\iint_{X,Y} p(x,y)\log p(y|x) dxdy\\
+    &= \E_{p(x)}[-\log p(x)] + \E_{p(x,y)}[-\log p(y|x)]\\
+    &= H(X) - H(Y|X)\\
+    H(X,Y)
+    &= \E_{p(x,y)}[-\log p(x,y)]\\
+    &= \iint_{X,Y} p(x,y) -\log p(x,y) dxdy\\
+    &= -\iint_{X,Y} p(x,y) \· \log p(y)p(x|y) dxdy\\
+    &= -\int_Y p(y)\·\log p(y) \int_X p(x|y) dxdy  -\iint_{X,Y} p(x,y)\log p(x|y) dxdy\\
+    &= -\int_Y p(x)\·\log p(y) dy  -\iint_{X,Y} p(x,y)\log p(y|x) dxdy\\
+    &= \E_{p(y)}[-\log p(y)] + \E_{p(x,y)}[-\log p(y|x)]\\
+    &= H(Y) - H(X|Y)
+\end{align*}
+
+\subsection{}
+\begin{align*}
+    I(X;Y|Z)
+    &= \E_{p(z)}[\KL(p(x,y|z)||p(x|z)p(y|z))]\\
+    &= \int_Z p(z) \iint_{X,Y} p(x,y|z) \log{(\÷{p(x,y|z)}{p(x|z)p(y|z)})} dxdydz\\
+    &= \int_Z p(z) \iint_{X,Y} p(x,y|z) \log{(\÷{p(y|z)p(x|y,z)}{p(x|z)p(y|z)})} dxdydz\\
+    &= \iiint_{X,Y,Z} p(x,y,z) \log p(x|y,z) dxdydz\\
+    &\quad -\iiint_{X,Y,Z} p(x,y,z) \log p(x|z) dxdydz\\
+    &= -\E_{p(x,y,z)}[-\log p(x|y,z)] +\E_{p(x,z)}[-\log p(x|z)]\\
+    &= -H(X|Y,Z) + H(X|Z)\\
+    I(X;Y|Z)
+    &= \E_{p(z)}[\KL(p(x,y|z)||p(x|z)p(y|z))]\\
+    &= \iiint_{X,Y,Z} p(x,y,z) \log{(\÷{p(x|z)p(y|x,z)}{p(x|z)p(y|z)})} dxdydz\\
+    &= \iiint_{X,Y,Z} p(x,y,z) \log p(y|x,z) dxdydz\\
+    &\quad -\iint_{Y,Z} p(y,z) \log p(y|z) dydz\\
+    &= -\E_{p(x,y,z)}[-\log p(y|x,z)] +\E_{p(y,z)}[-\log p(y|z)]\\
+    &= -H(Y|X,Z) + H(Y|Z)
+\end{align*}
+
+\section{}
+We have:
+\begin{align*}
+    \text{Mult}(\B{x}|\B{\π}) &= \÷{M!}{x_1!x_2!\cdots x_K!} \· \π_1^{x_1}\π_2^{x_2}\cdots \π_K^{x_K}\\
+    \Σ_{i=1}^K x_i &= M \quad \wedge \quad \Σ_{i=1}^K \π_i = 1\\
+\end{align*}
+
+\subsection{}
+For minimal amount of parameters we have: \(x_K = M - \Σ_{i=1}^{K-1} x_i\) and \(\π_K = 1 - \Σ_{i=1}^{K-1} \π_i\)
+\begin{align*}
+    \text{Mult}(\B{x}|\B{\π})
+    &= \÷{M!}{x_1!\cdots x_K!} \· \exp\log{[\Π_{i=1}^K \π_i^{x_K}]}\\
+    &= \÷{M!}{x_1!\cdots x_K!} \· \exp{[\Σ_{i=1}^K x_i \log \π_i]}\\
+    &= \÷{M!}{x_1!\cdots x_K!} \· \exp{[\Σ_{i=1}^{K-1} x_i \log \π_i + (M - \Σ_{i=1}^{K-1} x_i)\·\log{(1 - \Σ_{i=1}^{K-1} \π_i)}]}\\
+    &= \÷{M!}{x_1!\cdots x_K!} \· \exp{[\Σ_{i=1}^{K-1} x_i \log \÷{\π_i}{1 - \Σ_{j=1}^{K-1} \π_j} + M\·\log{(1 - \Σ_{i=1}^{K-1} \π_i)}]}\\
+    &= h(\B{x}) \· \exp{[\B{\η}^T\·T(\B{x}) - A(\B{\η})]}\\
+    &\⇒\\
+    h(x) &= \÷{M!}{x_1!\cdots x_K!}\\
+    \B{T}(\B{x}) &= \bM{x_1\\\vdots\\x_K}\\
+    \B{\η} &= \bM{\log \÷{\π_1}{1 - \Σ_{j=1}^{K-1} \π_j}\\\vdots\\\log \÷{\π_{K-1}}{1 - \Σ_{j=1}^{K-1} \π_j}}\\
+    \π_i &= \÷{e^{\η_i}}{1 + \Σ_{j=1}^{K-1} e^{\η_j}}\\
+    A(\B{\η}) &= -M\·\log{(1 - \Σ_{i=1}^{K-1} \π_i)}\\
+    &= -M\·\log{(1 - \Σ_{i=1}^{K-1} \÷{e^{\η_i}}{1 + \Σ_{j=1}^{K-1} e^{\η_j}})}\\
+    &= -M\·\log{(\÷{1}{1 + \Σ_{j=1}^{K-1} e^{\η_j}})}\\
+    &= M\·\log{(1 + \Σ_{j=1}^{K-1} e^{\η_j})}\\
+\end{align*}
+
+\subsection{}
+\begin{align*}
+    \E[x_i]
+    &= \pf{A(\B{\η})}{\η_i}\\
+    &= M\pf{}{\η_i}\log{(1 + \Σ_{j=1}^{K-1} e^{\η_j})}\\
+    &= M \÷{e^{\η_i}}{1 + \Σ_{j=1}^{K-1} e^{\η_j}}\\
+    &= M\π_i\\
+    \cov(x_i,x_j)
+    &= \÷{\partial^2 A(\B{\η})}{\partial \η_i \partial \η_j}\\
+    &= - M \÷{e^{\η_i + \η_j}}{(1 + \Σ_{j=1}^{K-1} e^{\η_j})^2}\\
+    &= - M \÷{e^{\η_i}}{(1 + \Σ_{j=1}^{K-1} e^{\η_j})^2}\÷{e^{\η_j}}{(1 + \Σ_{j=1}^{K-1} e^{\η_j})^2}\\
+    &= - M\π_i\π_j
+\end{align*}
+
+\subsection{}
+The canonical conjugate prior of the exponential family is:
+\begin{align*}
+    p(\η|\chi,\υ) &\propto \exp{[\υ\·\chi^T\·\η - \υ\·A(\η)]}
+\end{align*}
+thus:
+\begin{align*}
+    p(\η|\chi,\υ)
+    &\propto \exp{[\υ\·\Σ_{i=0}^{K-1} \chi_i \· \log \÷{\π_i}{1 - \Σ_{j=1}^{K-1} \π_j}  + \υ \· M\·\log{(1 - \Σ_{i=1}^{K-1} \π_i)} ]}\\
+    &= \Π_{i=0}^{K-1} \exp{[\υ\·\chi_i \· \log \÷{\π_i}{1 - \Σ_{j=1}^{K-1} \π_j}]} \· \exp{[\υ \· M\·\log{(1 - \Σ_{j=1}^{K-1} \π_j)} ]}\\
+    &= \Π_{i=0}^{K-1} {\left(\÷{\π_i}{1 - \Σ_{j=1}^{K-1} \π_j}\right)}^{\υ\·\chi_i} \· {(1 - \Σ_{j=1}^{K-1} \π_j)}^{\υ\· M}\\
+    &= \Π_{i=0}^{K-1} {\π_i}^{\υ\·\chi_i} \· {(1 - \Σ_{j=1}^{K-1} \π_j)}^{\υ\· M - \υ\·\Σ_{j=0}^{K-1} \chi_j}\\
+    &= \Π_{i=0}^{K-1} {\π_i}^{\υ\·\chi_i} \· {\π_K}^{\υ\· M - \υ\·\Σ_{j=0}^{K-1} \chi_j}\\
+    &\propto \text{Dir}(\{\π_1,\…,\π_K\},\{\υ\·\chi_1+1,\…\υ\·\chi_{K-1} +1,\υ\·(M -\Σ_{j=0}^{K-1} \chi_j) + 1\})\\
+    &= \text{Dir}(\{\π_1,\…,\π_K\},\{\α_1,\…,\α_K\})
+\end{align*}
+The conjugate prior is a Dirichlet distribution.
+
+\subsection{}
+\begin{align*}
+    p(\B{\π}|\B{x},\B{\chi},\υ)
+    &= p(\B{x}|\B{\π})\·p(\B{\π}|\B{\chi},\υ)\\
+    &= \left(\÷{M!}{x_1!\cdots x_K!}\right)^n \· \Π_{j=0}^n \exp{[\Σ_{i=1}^K x_i^j \log \π_i]} \· \Π_{i=0}^K \π_i^{\α_i}\\
+    &= \left(\÷{M!}{x_1!\cdots x_K!}\right)^n \· \exp{[\Σ_{j=0}^n \Σ_{i=1}^K x_i^j \log \π_i]} \· \exp{[\Σ_{i=0}^K \α_i \log \π_i]}\\
+    &= \left(\÷{M!}{x_1!\cdots x_K!}\right)^n \· \exp{[\Σ_{i=1}^K (\α_i + \Σ_{j=0}^n x_i^j) \log \π_i]}\\
+    &= \left(\÷{M!}{x_1!\cdots x_K!}\right)^n \· \Π_{i=1}^K\π_i^{(\α_i + \Σ_{j=0}^n x_i^j)}\\
+\end{align*}
+
+With that we see that the update after \(n\) datapoints ist:
+\begin{align*}
+    \α_i^j \gets \α_i + \Σ_{j=0}^n x_i^j
+\end{align*}
+
+\section{}
+We have independent sources \(\{s_{it} = (s_{i1},\…,s_{iT})\}\) with measurements \(x_{kt} = \Σ_{i=1}^{K_s} A_{ki}s_{it} + \ε_{kt}\), noise \(\ε_{kt}~\N(0,σ^2_k)\).
+
+\subsection{}
+This model is an ICA model as it fullfills the characteristics of such.
+Our measurement is a noisy linear mixture of signals.
+The original signals are independent and not Gaussian distributed.
+The signals are independent with respect to time.
+
+
+\subsection{}
+\begin{align*}
+    &p(\{s_{1t}\},\{s_{2t}\},\{x_{1t}\},\{x_{2t}\},\{x_{3t}\})\\
+    &= \Π_{t=1}^T
+    p(s_{1t}|\υ_1)
+    p(s_{2t}|\υ_2)
+    p(x_{1t}|\υ_1,v_2,A_1,\σ_1)
+    p(x_{2t}|\υ_1,v_2,A_2,\σ_2)
+    p(x_{3t}|\υ_1,v_2,A_3,\σ_3)\\
+    &= \Π_{t=1}^T
+    \mathcal{T}(0,\υ_1)
+    \mathcal{T}(0,\υ_2)\\
+    &\quad\quad\·\left(\Σ_{i=1}^2 A_{1i} \mathcal{T}(0,\υ_i) + \N(0,\σ_1^2)\right)\\
+    &\quad\quad\·\left(\Σ_{i=1}^2 A_{2i} \mathcal{T}(0,\υ_i) + \N(0,\σ_2^2)\right)\\
+    &\quad\quad\·\left(\Σ_{i=1}^2 A_{3i} \mathcal{T}(0,\υ_i) + \N(0,\σ_3^2)\right)\\
+\end{align*}
+
+\subsection{}
+\I{Explaining away} is a phenomena seen in a BN when we have a variable dependent on two (or more) causes.
+If we than have information about one of the sources and also about the derivative variable we gain information about the other source variable, changing its distribution.
+In our case we might have have two audio sources and its mixture, if now know one of the inputs and the mixed signal we can retrieve/explain the other audio input.
+As such this is present in the given ICA model.
+
+
+\subsection{}
+\begin{enumerate}[(a)]
+    \item False
+    \item True
+    \item False
+    \item True
+    \item False
+    \item False
+    \item False
+    \item False
+\end{enumerate}
+
+\subsection{}
+Markov blankets for
+\begin{itemize}
+    \item[\(s_1\)] gives \(\{x_1, x_2, x_3, s_2\}\)
+    \item[\(x_1\)] gives \(\{s_1, s_2\}\)
+\end{itemize}
+
+\subsection{}
+\begin{align*}
+    p(\{x_{kt}\}|W,\{\υ_i\})
+    &= \Π_{i=1}^T p(\B{W}\B{x}_{t}|\{\υ_i\})|\det Jac(s \to x)|\\
+    &= \Π_{i=1}^T \left[\Π_{j=1}^I \mathcal{T}(s_{jt}|0,\{\υ_i\})\right]|\det Jac(s \to x)|\\
+    &= \Π_{i=1}^T \left[\Π_{j=1}^I \mathcal{T}(s_{jt}|0,\{\υ_i\})\right]|\det \B{W}|\\
+\end{align*}
+
+\subsection{}
+\begin{align*}
+    \log p(\{x_{kt}\}|W,\{\υ_i\})
+    &= \log \Π_{i=1}^T \left[\Π_{j=1}^I \mathcal{T}(s_{jt}|0,\{\υ_i\})\right]|\det \B{W}|\\
+    &= \Σ_{i=1}^T \left[\Σ_{j=1}^I \log \mathcal{T}(s_{jt}|0,\{\υ_i\})\right]|\det \B{W}|\\
+    &= T\·|\det \B{W}| + \Σ_{i=1}^T \Σ_{j=1}^I \log \mathcal{T}(s_{jt}|0,\{\υ_i\})\\
+\end{align*}
+
+\subsection{}
+SGD maximizes the log-likelihood.
+In contrast to full batch gradient descent we update the weights (here the de-mixing matrix) only with one datapoint in each iteration.
+As a first step in ICA the data should centered and applied whitening.
+The de-mixing matrix is initalized to a non-singular random matrix.
+Then we iterate until convergence (no significant change of the de-mixing matrix anymore).
+In each iteration we update with the gradient of the weight scaled by a learning rate \(\η\).
+Additionally we use use a non-linear activation function for the weight update.
+The activation function corresponds to a prior distribution over the sources.
+Typical choice for this problem would be \(\tanh(\·)\) as an activation function.
+After convergence the estimated de-mixing matrix will approximately give the original sources if multiplied to the mixed signals.
+
+\subsection{}
+\I{Overfitting} is expected at the limit \(K >> T\).
+With more sources \(K\) we have a more complicated model for less data \(T\).
+The over-paramatrization will lead to overfitting.
+
+\section{}
+\subsection{}
+\begin{align*}
+    p(x_1,\…,x_{n-1}|x_n,z_n) &= p(x_1,\…,x_{n-1}|z_n)
+\end{align*}
+
+\(\{x_1,\…,x_{n-1}\}\) is \I{d}-seperated from \(\{x_n\}\) by \(\{z_n\}\).
+Every path to \(x_n\) goes by \(x_{n-1}\to z_n \to x_n\).
+This is non-collider and reaches \(x_n\) thus as as a single blocking trace it \I{d}-seperated the two sets.
+
+\subsection{}
+\begin{align*}
+    p(x_1,\…,x_{n-1}|z_{n-1},z_n) &= p(x_1,\…,x_{n-1}|z_{n-1})
+\end{align*}
+\(\{x_1,\…,x_{n-1}\}\) is \I{d}-seperated from \(\{z_n\}\) by \(\{z_{n-1}\}\).
+Every path to \(z_n\) goes by \(z_{n-2} \to z_{n-1}\to z_n\) or \(x_{n-1} \gets z_{n-1} \to z_n\).
+Both are non-colliders and reach \(x_n\) thus as as \(z_{n-1}\) is the single blocking node it \I{d}-seperated the two sets.
+
+\subsection{}
+From the factorization properties of this Markov chain we know that \(z_n \indep x_{n+1},\…,x_N | z_{n+1}\).
+Using this we can write:
+
+\begin{align*}
+    p(x_{n+1},\…,x_N|z_n,z_{n+1})
+    &= \÷{p(z_n,z_{n+1}|x_{n+1},\…,x_N)\·p(x_{n+1},\…,x_N)}{p(z_n,z_{n+1})}\\
+    &= \÷{p(z_n|z_{n+1},x_{n+1},\…,x_N)\·p(z_{n+1}|x_{n+1},\…,x_N)\·p(x_{n+1},\…,x_N)}{p(z_n|z_{n+1})p(z_{n+1})}\\
+    &= \÷{p(z_n|z_{n+1})\·p(z_{n+1}|x_{n+1},\…,x_N)\·p(x_{n+1},\…,x_N)}{p(z_n|z_{n+1})p(z_{n+1})}\\
+    &= \÷{p(z_{n+1}|x_{n+1},\…,x_N)\·p(x_{n+1},\…,x_N)}{p(z_{n+1})}\\
+    &= p(x_{n+1},\…,x_N|z_{n+1})
+\end{align*}
+
+\subsection{}
+\(z_{N+1}\) does not exist in Figure~1, thus we assume an extension \(z_N \to z_{N+1}\).
+Again from the factorization properties we know that \(\B{X} \indep z_{N+1} | z_N\):
+\begin{align*}
+    \B{X} &= \{x_1,\…,x_N\}\\
+    p(z_{N+1}|z_N, \B{X})
+    &= \÷{p(z_N, \B{X}|z_{N+1})\·p(z_{N+1})}{p(z_N, \B{X})}\\
+    &= \÷{p(\B{X}|z_N,z_{N+1})p(z_N|z_{N+1})\·p(z_{N+1})}{p(z_N)p(\B{X}|z_N)}\\
+    &= \÷{p(\B{X}|z_N)p(z_N|z_{N+1})\·p(z_{N+1})}{p(z_N)p(\B{X}|z_N)}\\
+    &= \÷{p(z_N|z_{N+1})\·p(z_{N+1})}{p(z_N)}\\
+    &= p(z_{N+1}|z_N)
+\end{align*}
+
+\end{document}
