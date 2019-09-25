@@ -21,4 +21,41 @@
 
 \begin{document}
 \maketitle
+\section{}
+We have \(\B{X} = \{x_1, \…, x_N\}\) and \(\B{Z} = \{z_1, \…, z_N\}\).
+
+\subsection{}
+\begin{align*}
+  p(\B{Z}, \B{X})
+  &= p(z_1)\·\left(\Π_{i=2}^N p(z_i|z_{i-1})\right) \· \left(\Π_{i=1}^N p(x_i|z_i)\right)
+\end{align*}
+
+\subsection{}
+We present the factor graph for the Markov chain:
+\begin{center}
+  \tikzstyle{var} = [circle, draw=red, inner sep=2pt, thick]
+  \tikzstyle{func} = [rectangle, fill, red]
+  \begin{tikzpicture}
+    \path (0,0) node[var](x1) {\(x_1\)} (2,0) node[var](x2) {\(x_2\)} (6,0) node[var](xN) {\(x_N\)};
+    \path (0,0.75) node[func](f_x1) {} (2,0.75) node[func](f_x2) {} (6,0.75) node[func](f_xN) {};
+    \path (0,1.5) node[var](z1) {\(z_1\)} (2,1.5) node[var](z2) {\(z_2\)} (6,1.5) node[var](zN) {\(z_N\)};
+    \path (0,2.25) node[func](f_z1) {} (1,2.25) node[func](f_z2) {} (3,2.25) node[func](f_z3) {} (5,2.25) node[func](f_zN) {};
+    \path (3.7,1.7) node(z3) {} (4.3,1.7) node(zN1) {};
+    \draw[red, thick] (x1) -- (f_x1) -- (z1) (x2) -- (f_x2) -- (z2) (xN) -- (f_xN) -- (zN) (z1) -- (f_z2) -- (z2) -- (f_z3) (z1) -- (f_z1) (zN) -- (f_zN);
+    \draw[red, thick,dotted] (f_z3) -- (z3) (zN1) -- (f_zN);
+    \path (4,1) node[red]() {\(\…\)};
+  \end{tikzpicture}
+\end{center}
+
+\subsection{}
+\subsection{}
+
+\section{}
+\subsection{}
+\subsection{}
+
+\section{}
+
+\section{}
+
 \end{document}
