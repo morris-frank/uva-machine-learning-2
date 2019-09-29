@@ -37,13 +37,13 @@ We present the factor graph for the Markov chain:
   \tikzstyle{func} = [rectangle, fill, red]
   \begin{tikzpicture}
     \path (0,0) node[var](x1) {\(x_1\)} (2,0) node[var](x2) {\(x_2\)} (6,0) node[var](xN) {\(x_N\)};
-    \path (0,0.75) node[func](f_x1) {} (2,0.75) node[func](f_x2) {} (6,0.75) node[func](f_xN) {};
-    \path (0,1.5) node[var](z1) {\(z_1\)} (2,1.5) node[var](z2) {\(z_2\)} (6,1.5) node[var](zN) {\(z_N\)};
-    \path (0,2.25) node[func](f_z1) {} (1,2.25) node[func](f_z2) {} (3,2.25) node[func](f_z3) {} (5,2.25) node[func](f_zN) {};
-    \path (3.7,1.7) node(z3) {} (4.3,1.7) node(zN1) {};
+    \path (0,1) node[func](f_x1) {} (2,1) node[func](f_x2) {} (6,1) node[func](f_xN) {};
+    \path (1,0) node[var](z1) {\(z_1\)} (3,0) node[var](z2) {\(z_2\)} (7,0) node[var](zN) {\(z_N\)};
+    \path (0.5,1) node[func](f_z1) {} (1,1) node[func](f_z2) {} (3,1) node[func](f_z3) {} (5,1) node[func](f_zN) {};
+    \path (3.7,0) node(z3) {} (4.3,0) node(zN1) {};
     \draw[red, thick] (x1) -- (f_x1) -- (z1) (x2) -- (f_x2) -- (z2) (xN) -- (f_xN) -- (zN) (z1) -- (f_z2) -- (z2) -- (f_z3) (z1) -- (f_z1) (zN) -- (f_zN);
     \draw[red, thick,dotted] (f_z3) -- (z3) (zN1) -- (f_zN);
-    \path (4,1) node[red]() {\(\…\)};
+    \path (4,0) node[red]() {\(\…\)};
   \end{tikzpicture}
 \end{center}
 
@@ -56,20 +56,133 @@ We present the factor graph for the Markov chain:
 \subsection{}
 \begin{align*}
   p(z_n|\B{X})
-  &= \÷{\α(z_n) \β(z_n)}{p(\B{X})}
+  &= \÷{p(\B{X}|z_n)p(z_n)}{p(\B{X})}\\
+  &= \÷{p(x_1,\…,x_N|z_n)p(z_n)}{p(\B{X})}\\
+  &= \÷{p(x_1,\…,x_n|z_n)p(x_{n+1},\…,x_N|z_n)p(z_n)}{p(\B{X})} \tag{1}\\
+  &= \÷{\α(z_n)\β(z_n)}{p(\B{X})}\\
+  &\⇒\\
+  \α(z_n) &:= p(x_1,\…,x_n|z_n)\\
+  \β(z_n) &:= p(x_{n+1},\…,x_N|z_n)p(z_n)\\
+  &= p(x_{n+1},\…,x_N,z_n)\\
 \end{align*}
+Step (1) is possible as \(z_n\) \I{d}-seperates the Markov chain at \(x_n, x_{n+1}\).
 
-\section{}
-\subsection{}
 \begin{align*}
-  \μ_\α(x_2) &= \Σ_{x_1} \ψ_{1,2}(x_1,x_2)
-  \μ_\α(x_i) &= \Σ_{x_{i-1}} \ψ_{i-1,i}
+  \α(z_n)
+  &= p(x_1,\…,x_n|z_n)\\
+  &= \Σ_{z_{n-1}} p(x_1,\…,x_n|z_n, z_{n-1}) p(z_{n-1})\\
+  &= \Σ_{z_{n-1}} \÷{p(x_1,\…,x_n,z_n|z_{n-1})}{p(z_n)} p(z_{n-1})\\
+  &= \Σ_{z_{n-1}} \÷{p(x_1,\…,x_{n-1}|z_{n-1}) p(x_n,z_n|z_{n-1})}{p(z_n)} p(z_{n-1}) \tag{2}\\
+  &= \Σ_{z_{n-1}} p(x_1,\…,x_{n-1}|z_{n-1}) p(x_n,z_{n-1}|z_{n})\\
+  &= \Σ_{z_{n-1}} \α(z_{n-1}) p(x_n,z_{n-1}|z_{n})\\
 \end{align*}
+Again Step (2) is possible as \(z_{n-1}\) \I{d}-seperates \(\{x_1,\…,x_n,z_n\}\) into \(\{x_1,\…,x_{n-1}\}\) and \(\{x_n,z_n\}\).
+
+\begin{align*}
+  \β(z_n)
+  &= p(x_{n+1},\…,x_N,z_n)\\
+  &= \Σ_{z_n+1} p(x_{n+1},\…,x_N,z_n|z_{n+1})p(z_{n+1})\\
+  &= \Σ_{z_n+1} p(x_{n+2},\…,x_N|z_{n+1}) p(x_{n+1},z_n|z_{n+1}) p(z_{n+1}) \tag{3}\\
+  &= \Σ_{z_n+1} p(x_{n+2},\…,x_N,z_{n+1}) p(x_{n+1},z_n|z_{n+1})\\
+  &= \Σ_{z_n+1} \β(z_{n+1}) p(x_{n+1},z_n|z_{n+1})\\
+\end{align*}
+Again Step (3) is possible as \(z_{n+11}\) \I{d}-seperates \(\{x_{n+1},\…,x_N,z_n\}\) into \(\{x_{n+2},\…,x_{N}\}\) and \(\{x_{n+1},z_n\}\).
+
+
+\section{}
+First we build the implicit factor graph for the chain with the implicit factors \(\{f_{1,2},\…,f_{N-1,N}\}\):
+\begin{center}
+  \tikzstyle{var} = [circle, draw=red, inner sep=2pt, thick]
+  \tikzstyle{func} = [rectangle, fill, red]
+  \begin{tikzpicture}
+    \path (0,0) node[var](x1) {\(x_1\)} (2,0) node[var](x2) {\(x_2\)} (4,0) node[red](x3) {\(\…\)} (5,0) node(xn) {} (6,0) node[var](xN) {\(x_N\)};
+    \path (1,1) node[func](f_x1x2) {} (3,1) node[func](f_x2x3) {} (5,1) node[func](f_xN) {};
+    \draw[red, thick] (x1) -- (f_x1x2) -- (x2) -- (f_x2x3) (f_xN) -- (xN);
+    \draw[red, dotted, thick] (f_x2x3) -- (x3) -- (f_xN);
+  \end{tikzpicture}
+\end{center}
+
+\subsection{}
+From the factor graph we start the message passing of the sum-product algorithm from the left end to the root \(x_n\):
+Left side::
+\begin{align*}
+  \μ_{x_1 \to \ψ_{1,2}} &= 1\\
+  \μ_{\ψ_{1,2} \to x_2} &= \Σ_{x_1} \ψ_{1,2}(x_1,x_2)\\
+  \μ_{x_i \to \ψ_{i,i+1}} &= \μ_{\ψ_{i-1,i} \to x_i} \quad\forall 1 < i < n-1 \\
+  \μ_{\ψ_{i,i+1} \to x_{i+1}} &= \Σ_{x_i} \ψ_{i,i+1}(x_i,x_{i+1})\μ_{x_i \to \ψ_{i,i+1}} \quad\forall 1 < i < n \\
+\end{align*}
+
+With that we define \(\μ_\α\):
+\begin{align*}
+  \μ_\α(x_n)
+  &:= \μ_{\ψ_{n-1,n} \to x_{n}}\\
+  &= \Σ_{x_{n-1}} \ψ_{n-1, n}(x_{n-1},x_{n})\μ_{x_{n-1} \to \ψ_{n-1,n}} \\
+  &= \Σ_{x_{n-1}} \ψ_{n-1, n}(x_{n-1},x_{n}) \μ_{\ψ_{n-2,n-1} \to x_{n-1}} \\
+  &= \Σ_{x_{n-1}} \ψ_{n-1, n}(x_{n-1},x_{n}) \μ_\α(x_{n-1}) \\
+\end{align*}
+
+Same we do from the right side:
+\begin{align*}
+  \μ_{x_N \to \ψ_{N-1,N}} &= 1\\
+  \μ_{\ψ_{N-1,N} \to x_{N-1}} &= \Σ_{x_N} \ψ_{N-1,N}(x_{N-1},x_N)\\
+  \μ_{x_i \to \ψ_{i-1,i}} &= \μ_{\ψ_{i+1,i} \to x_i} \quad\forall n+1 < i < N \\
+  \μ_{\ψ_{i-1,i} \to x_{i-1}} &= \Σ_{x_i} \ψ_{i-1,i}(x_{i-1},x_{i})\μ_{x_i \to \ψ_{i-1,i}} \quad\forall n < i < N \\
+\end{align*}
+
+With that we define \(\μ_\β\):
+\begin{align*}
+  \μ_\β(x_n)
+  &:= \μ_{\ψ_{n,n+1} \to x_{n}}\\
+  &= \Σ_{x_{n+1}} \ψ_{n, n+1}(x_{n},x_{n+1})\μ_{x_{n+1} \to \ψ_{n,n+1}} \\
+  &= \Σ_{x_{n+1}} \ψ_{n, n+1}(x_{n},x_{n+1})\μ_{\ψ_{n+2, n+1} \to x_{n+1}} \\
+  &= \Σ_{x_{n+1}} \ψ_{n, n+1}(x_{n},x_{n+1})\μ_\β(x_{n+1}) \\
+\end{align*}
+
+Given the  two neighbours of \(x_n\) we can write (Bishop 8.63):
+\begin{align*}
+  p(x_n)
+  &= \÷{1}{Z} \· \μ_{\ψ_{n-1,n} \to x_{n}} \·  \μ_{\ψ_{n,n+1} \to x_{n}}\\
+  &= \÷{1}{Z} \· \μ_\α(x_n) \· \μ_\β(x_n)
+\end{align*}
+
+The normalizing constant \(Z\) can be computed from the complete joint distribution.
 
 \subsection{}
 
 \section{}
+When \(x_N\) is observed this will only affect the last potential \(\ψ_{N-1, N}(x_{N-1},x_N)\).
+Thus we can extend this to only pass the observed value.
+Assuming we have a observed value of \(x_N = \chi\) we can introduce a indicator function \(\1[x_N = \chi]\) which one-hot encode the observed value:
+\begin{align*}
+  \1[x_N = \chi] &= \begin{cases}
+    1 & \text{if } x_N = \chi\\
+    0 & \text{else}
+  \end{cases}
+\end{align*}
+
+Given that the last potential becomes:
+\begin{align*}
+  \ψ_{N-1, N}(x_{N-1},x_N) \gets \ψ_{N-1, N}(x_{N-1},x_N)\1[x_N=\chi]
+\end{align*}
+
+and we can keep all message passes after that.
 
 \section{}
+The variables \(\B{x}_s = \{x_1,\…,x_N\}\) are connected to factor \(f_s\).
 
+\begin{align*}
+  p(\B{x}_s)
+  &= f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \μ_{x_i \to f_s(x_i)}\\
+  &= f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \Π_{j\∈ \text{ne}(x_i)\setminus f_s} F_j(x_i, \B{X}_j)\\
+\end{align*}
+
+We get the marginal distribution by summing over \(\B{x}\) without \(\B{x}_s\) and get:
+\begin{align*}
+  p(\B{x}_s)
+  &= \Σ_{\B{x}\setminus \B{x}_s} p(\B{x})\\
+  &= \Σ_{\B{x}\setminus \B{x}_s} f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \Π_{j\∈ \text{ne}(x_i)\setminus f_s} F_j(x_i, \B{X}_j)\\
+  &= f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \Π_{j\∈ \text{ne}(x_i)\setminus f_s} \left(\Σ_{\B{X}_j} F_j(x_i, \B{X}_j)\right)\\
+  &= f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \Π_{j\∈ \text{ne}(x_i)\setminus f_s} \μ_{f_j \to x_i}(x_i)\\
+  &= f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \μ_{x_i \to f_s}(x_i)\\
+\end{align*}
 \end{document}
