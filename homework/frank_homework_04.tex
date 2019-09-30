@@ -21,6 +21,9 @@
 
 \begin{document}
 \maketitle
+
+\noindent\I{Note}: I discussed solutions with Karan Malhotra.
+
 \section{}
 We have \(\B{X} = \{x_1, \…, x_N\}\) and \(\B{Z} = \{z_1, \…, z_N\}\).
 
@@ -104,7 +107,8 @@ First we build the implicit factor graph for the chain with the implicit factors
 
 \subsection{}
 From the factor graph we start the message passing of the sum-product algorithm from the left end to the root \(x_n\):
-Left side::
+
+Left side:
 \begin{align*}
   \μ_{x_1 \to \ψ_{1,2}} &= 1\\
   \μ_{\ψ_{1,2} \to x_2} &= \Σ_{x_1} \ψ_{1,2}(x_1,x_2)\\
@@ -147,8 +151,6 @@ Given the  two neighbours of \(x_n\) we can write (Bishop 8.63):
 
 The normalizing constant \(Z\) can be computed from the complete joint distribution.
 
-\subsection{}
-
 \section{}
 When \(x_N\) is observed this will only affect the last potential \(\ψ_{N-1, N}(x_{N-1},x_N)\).
 Thus we can extend this to only pass the observed value.
@@ -168,15 +170,7 @@ Given that the last potential becomes:
 and we can keep all message passes after that.
 
 \section{}
-The variables \(\B{x}_s = \{x_1,\…,x_N\}\) are connected to factor \(f_s\).
-
-\begin{align*}
-  p(\B{x}_s)
-  &= f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \μ_{x_i \to f_s(x_i)}\\
-  &= f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \Π_{j\∈ \text{ne}(x_i)\setminus f_s} F_j(x_i, \B{X}_j)\\
-\end{align*}
-
-We get the marginal distribution by summing over \(\B{x}\) without \(\B{x}_s\) and get:
+We get the marginal distribution by summing over the join distribution of \(\B{x}\) without \(\B{x}_s\) and get:
 \begin{align*}
   p(\B{x}_s)
   &= \Σ_{\B{x}\setminus \B{x}_s} p(\B{x})\\
@@ -185,4 +179,5 @@ We get the marginal distribution by summing over \(\B{x}\) without \(\B{x}_s\) a
   &= f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \Π_{j\∈ \text{ne}(x_i)\setminus f_s} \μ_{f_j \to x_i}(x_i)\\
   &= f_s(\B{x}_s) \Π_{i\∈ \text{ne}(f_s)} \μ_{x_i \to f_s}(x_i)\\
 \end{align*}
+With \(\B{X}_j\) being the nodes in the sub-graph of \(x_j\) without \(x_i\) and \(F_j(x_i, \B{X}_j)\) being the product of this sub-tree.
 \end{document}
