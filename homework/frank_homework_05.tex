@@ -1,0 +1,200 @@
+\documentclass{article}
+\usepackage{morris}
+\usepackage{diagbox}
+\usepackage{centernot}
+\usepackage{tikz}
+\usepackage{enumerate}
+
+\newcommand{\indep}{\mathrel{\text{\scalebox{1.07}{\ensuremath{\perp\mkern-10mu\perp}}}}}
+\newcommand{\nindep}{\centernot{\indep}}
+
+\renewcommand{\thesection}{Problem \arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\alph{subsubsection})}
+
+\title{Machine Learning 2 --- Homework 5}
+\author{%
+  Maurice Frank\\
+  11650656\\
+  \href{mailto:maurice.frank@posteo.de}{maurice.frank@posteo.de}
+}
+
+\begin{document}
+\maketitle
+
+\section{}
+We have \(p(\B{x}) = \Σ_{k=1}^K \π_l \N(\B{x}|\B{\μ}_k, \B{\Sigma}_k)\).
+\begin{align*}
+    \E_{\text{posterior}}[\ln p(\B{X},\B{Z}|\B{\μ},\B{\Sigma},\B{\π})]
+    &= \Σ_{n=1}^N \Σ_{k=1}^K \γ(z_{nk} \{\ln \π_k + \ln \N(\B{x}_n|\B{\μ}_k, \B{\Sigma}_k)\})\\
+\end{align*}
+
+\subsection{}
+For the update of \(\B{\π}\) we have to formulate the Lagrangian:
+\begin{align*}
+    \L &= \E_{\text{posterior}}[\ln p(\B{X},\B{Z}|\B{\μ},\B{\Sigma},\B{\π})] + \λ \· (\Σ_{k=1}^K \π_k -1)\\
+    \pf{}{\π_k} \L
+    &= \Σ_{n=1}^N \pf{}{\π_k} \γ(z_{nk}) \ln \π_k + \λ \· \pf{}{\π_k} (\π_k -1)\\
+    &= \Σ_{n=1}^N \÷{\γ(z_{nk})}{\π_k} + \λ\\
+    &= \÷{1}{\π_k} \· (\Σ_{n=1}^N \γ(z_{nk})) + \λ\\
+    &\equiv 0\\
+    &\⇔\\
+    \π_k
+    &= - \Σ_{n=1}^N \÷{\γ(z_{nk})}{\λ}\\
+    &= - \÷{N_k}{\λ}\\
+    \pf{\L}{\λ}
+    &= \Σ_{k=1}^K \π_k - 1\\
+    &\equiv 0\quad\⇒\\
+    \Σ_{k=1}^K \π_k
+    &= 1\quad\⇒\\
+    -\Σ_{k=1}^K \÷{N_k}{\λ}
+    &= 1\quad\⇒\\
+    \λ &= - \Σ_{k=1}^K N_k = N\\
+    &\⇒\\
+    \π_k
+    &= \÷{N_k}{N}
+\end{align*}
+
+\begin{align*}
+    \pf{}{\B{\μ}_k}\E_{\text{posterior}}[\ln p(\B{X},\B{Z}|\B{\μ},\B{\Sigma},\B{\π})]
+    &= \Σ_{n=1}^N \γ(z_{nk}) \pf{}{\B{\μ}_k} \ln \N(\B{x}_n|\B{\μ}_k, \B{\Sigma}_k)) \\
+    &= \Σ_{n=1}^N \γ(z_{nk}) \÷{\÷{1}{2} (\B{x}_n^T\B{\Sigma}_k^{-1} + \B{\Sigma}_k^{-1}\B{x}_n - 2\·\B{\Sigma}_k^{-1}\B{\μ}_k) \· \N(\B{x}_n|\B{\μ}_k, \B{\Sigma}_k))}{\N(\B{x}_n|\B{\μ}_k, \B{\Sigma}_k))} \\
+    &= \Σ_{n=1}^N \γ(z_{nk}) \B{\Sigma}_k^{-1}\·(\B{x}_n - \B{\μ}_k) \\
+    &\equiv 0 \\
+    &\⇒\\
+    \Σ_{n=1}^N \γ(z_{nk}) \B{\Sigma}_k^{-1} \B{\μ}_k
+    &= \Σ_{n=1}^N \γ(z_{nk}) \B{\Sigma}_k^{-1} \B{x}_n \\
+    &\⇔\\
+    \B{\μ}_k
+    &= \÷{1}{\Σ_{n=1}^N \γ(z_{nk})} \Σ_{n=1}^N \γ(z_{nk}) \B{x}_n\\
+    &= \÷{\Σ_{n=1}^N \γ(z_{nk}) \B{x}_n}{\Σ_{n=1}^N \γ(z_{nk})}\\
+    &= \÷{\Σ_{n=1}^N \γ(z_{nk}) \B{x}_n}{N_k}\\
+\end{align*}
+
+\begin{align*}
+    \pf{}{\B{\Sigma}_k}\E_{\text{posterior}}[\ln p(\B{X},\B{Z}|\B{\μ},\B{\Sigma},\B{\π})]
+    &= \Σ_{n=1}^N \γ(z_{nk}) \· \pf{}{\B{\Sigma}_k} \log \N(\B{x}_n|\B{\μ}_k, \B{\Sigma}_k)\\
+    &= \Σ_{n=1}^N \γ(z_{nk}) \· \left( -\÷{1}{2}\pf{}{\B{\Sigma}_k} \ln |\B{\Sigma}_k| -\÷{1}{2}\pf{}{\B{\Sigma}_k} (\B{x}_n - \B{\μ}_k)^T \B{\Sigma}_k^{-1} (\B{x}_n - \B{\μ}_k) \right)\\
+    &= \Σ_{n=1}^N \γ(z_{nk}) \· -\÷{1}{2}\left( \÷{|\B{\Sigma}_k| {\B{\Sigma}_k^{-1}}}{|\B{\Sigma}_k|} - {\B{\Sigma}_k^{-1}} (\B{x}_n - \B{\μ}_k)(\B{x}_n - \B{\μ}_k)^T{\B{\Sigma}_k^{-1}} \right)\\
+    &= \Σ_{n=1}^N \γ(z_{nk}) \· \÷{1}{2}\left( {\B{\Sigma}_k^{-1}} (\B{x}_n - \B{\μ}_k)(\B{x}_n - \B{\μ}_k)^T{\B{\Sigma}_k^{-1}} - {\B{\Sigma}_k^{-1}}\right)\\
+    &\equiv 0\\
+    &\⇒\\
+    \÷{N_k}{2} {\B{\Sigma}_k^{-1}}
+    &= \÷{1}{2} \Σ_{n=1}^N \γ(z_{nk}) \· {\B{\Sigma}_k^{-1}} (\B{x}_n - \B{\μ}_k)(\B{x}_n - \B{\μ}_k)^T{\B{\Sigma}_k^{-1}}\\
+    &\⇒\\
+    {\B{\Sigma}_k}
+    &= \Σ_{n=1}^N \÷{\γ(z_{nk})}{N_k} \· (\B{x}_n - \B{\μ}_k)(\B{x}_n - \B{\μ}_k)^T\\
+\end{align*}
+
+\subsection{}
+The updates given for \(\B{\π}_k\) and \(\B{\μ}_k\) do not depend on the covariance.
+Therefore these two update rules do not change.
+
+For the update of the common \(\B{\Sigma}\) we have then:
+\begin{align*}
+    \pf{}{\B{\Sigma}}\E_{\text{posterior}}[\ln p(\B{X},\B{Z}|\B{\μ},\B{\Sigma},\B{\π})]
+    &= \Σ_{n=1}^N \Σ_{k=1}^K \γ(z_{nk}) \· \pf{}{\B{\Sigma}} \log \N(\B{x}_n|\B{\μ}_k, \B{\Sigma})\\
+    &= \Σ_{n=1}^N \Σ_{k=1}^K \γ(z_{nk}) \· \÷{1}{2}\left( {\B{\Sigma}^{-1}} (\B{x}_n - \B{\μ}_k)(\B{x}_n - \B{\μ}_k)^T{\B{\Sigma}^{-1}} - {\B{\Sigma}^{-1}}\right)\\
+    &\equiv 0\\
+    &\⇒\\
+    {\B{\Sigma}}
+    &= \Σ_{n=1}^N \Σ_{k=1}^K y\÷{\γ(z_{nk})}{N_k} \· (\B{x}_n - \B{\μ}_k)(\B{x}_n - \B{\μ}_k)^T\\
+\end{align*}
+
+\section{}
+\begin{align*}
+    \ln p(\B{\θ}|\B{X})
+    &= \ln p(\B{\θ},\B{X}) - \ln p(\B{X})\\
+    &= \ln p(\B{X}|\B{\θ}) +\ln p(\B{\θ}) -\ln p(\B{X})\\
+    &= \L(q,\B{\θ}) + \KL[q||p] + \ln p(\B{\θ}) - \ln p(\B{X})\\
+    &\geqslant \L(q,\B{\θ}) + \ln p(\B{\θ}) - \ln p(\B{X})\\
+\end{align*}
+
+For the E-Step we maximize the lower bound w.r.t. \(q\).
+As only \(\L(q,\B{\θ})\) is dependent on \(q\) we have the same situation as in the E-step for the ML estimate.
+\\\\
+For the M-step we maximize the lower bound w.r.t. \(\B{\θ}\):
+\begin{align*}
+    \argmax_{\B{\θ}} \L(q,\B{\θ}) + \ln p(\B{\θ}) - \ln p(\B{X})
+    &= \argmax_{\B{\θ}} \L(q,\B{\θ}) + \ln p(\B{\θ})\\
+    &= \argmax_{\B{\θ}} \Σ_z p(\B{Z}|\B{X},\B{\θ}^{\text{old}}) \· \ln\÷{p(\B{X}, \B{Z}|\B{\θ})}{p(\B{Z}|\B{X},\B{\θ}^{\text{old}})}  + \ln p(\B{\θ})\\
+    &= \argmax_{\B{\θ}} \Σ_z p(\B{Z}|\B{X},\B{\θ}^{\text{old}}) \· \ln p(\B{X}, \B{Z}|\B{\θ})\\
+    &\quad - \Σ_z p(\B{Z}|\B{X},\B{\θ}^{\text{old}}) \· \ln p(\B{Z}|\B{X},\B{\θ}^{\text{old}})  + \ln p(\B{\θ})\\
+    &= \argmax_{\B{\θ}} \Σ_z p(\B{Z}|\B{X},\B{\θ}^{\text{old}})\ln p(\B{X}, \B{Z}|\B{\θ}) + H[p(\B{Z}|\B{X},\B{\θ}^{\text{old}})] + \ln p(\B{\θ})\\
+    &= \argmax_{\B{\θ}} \Σ_z p(\B{Z}|\B{X},\B{\θ}^{\text{old}})\ln p(\B{X}, \B{Z}|\B{\θ}) + \ln p(\B{\θ})\\
+\end{align*}
+
+The entropy of \(p(\B{Z}|\B{X},\B{\θ}^{\text{old}})\) drops out as it does not depend on \(\B{\θ}\).
+
+\section{}
+We have:
+\begin{align*}
+    \B{\π}|\B{\α}                                       &\sim \Dir(\B{\π}|\B{\α})\\
+    \B{z}_n|\B{\π}                                      &\sim \text{Mult}(\B{z}_n|\B{\π})\\
+    \B{\μ}_k|a_k,b_k                                    &\sim \Beta(\B{\μ}|a_k,b_k)\\
+    \B{x}_n|\B{z}_n,\B{\μ} = \{\B{\μ}_1,\…,\B{\μ}_K\}   &\sim \Π_{k=1}^K {(\text{Bern}(\B{x}_n|\B{\μ}_k))}^{z_{nk}}
+\end{align*}
+
+Further lets write some stuff that we gonna use later:
+\begin{align*}
+    \ln p(\B{\μ})
+    &= \Σ_{k=1}^K \Σ_j^D (a_k - 1) \ln \μ_{kj} + (b_k - 1) \ln (1 - \μ_{kj}) - \ln \text{B}(a_k, b_k)\\
+    \ln p(\B{\π})
+    &= \Σ_{k=1}^K (\α_k - 1) \ln \π_k - \ln \text{B}(\α_k)\\
+    \E_{p(\B{Z}|\B{X},\B{\μ}^{\text{old}},\B{\π}^{\text{old}})}[ln p(\B{X}, \B{Z}|\B{\μ},\B{\π})]
+    &= \Σ_{n=1}^N \Σ_{k=1}^K \γ(z_{nk}) \left\{ \ln \π_k + \Σ_{i=1}^D [ x_{ni} \ln \μ_{ki} + (1 - x_{ni}) \ln(1-\μ_{ki}) ] \right\}
+\end{align*}
+with the last being already the result from the E-step as described in the book.
+
+To calculate the updates for \(\B{\μ}\) and \(\B{\π}\) in the M-step we can use the result from Problem 2:
+\begin{align*}
+    \argmax_{\B{\μ},\B{\π}} \L(q,\B{\μ},\B{\π}) + \ln p(\B{\θ}) + \ln p(\B{\π})
+    &= \argmax_{\B{\μ},\B{\π}} \Σ_z p(\B{Z}|\B{X},\B{\μ}^{\text{old}},\B{\π}^{\text{old}})\ln p(\B{X}, \B{Z}|\B{\μ},\B{\π}) + \ln p(\B{\μ}) + \ln p(\B{\π})\\
+    &= \Σ_{n=1}^N \Σ_{k=1}^K \γ(z_{nk}) \left\{ \ln \π_k + \Σ_{i=1}^D [ x_{ni} \ln \μ_{ki} + (1 - x_{ni}) \ln(1-\μ_{ki}) ] \right\}\\
+    &\quad + \Σ_{k=1}^K \Σ_j^D (a_k - 1) \ln \μ_{kj} + (b_k - 1) \ln (1 - \μ_{kj}) - \ln \text{B}(a_k, b_k)\\
+    &\quad + \Σ_{k=1}^K (\α_k - 1) \ln \π_k - \ln \text{B}(\α_k)\\
+    &\quad + \λ\·(\Σ_{k=1}^K \π_k - 1)
+\end{align*}
+we already added the lagrange Multiplier for the condition of the Dirichlet distribution of \(\π\).
+
+Now we maximize for the two variables.
+
+First for \(\B{\μ}\):
+\begin{align*}
+    \pf{}{\μ_{ki}} \L(q,\B{\μ},\B{\π}) + \ln p(\B{\θ}) + \ln p(\B{\π})
+    &= \Σ_{n=1}^N \γ(z_{nk}) \left\{x_{ni} \÷{1}{\μ_{ki}} - (1 - x_{ni}) \÷{1}{1-\μ_{ki}} \right\}\\
+    &\quad + (a_k - 1) \÷{1}{\μ_{ki}} - (b_k - 1) \÷{1}{1 - \μ_{ki}}\\
+    &= \÷{1}{\μ_{ki}} \left(\Σ_{n=1}^N \γ(z_{nk})x_{ni} + (a_k - 1)\right)\\
+    &\quad - \÷{1}{1-\μ_{ki}} \left(\Σ_{n=1}^N \γ(z_{nk})(1-x_{ni}) + (b_k - 1)\right)\\
+    &\equiv 0\\
+    &\⇒\\
+    \left(\Σ_{n=1}^N \γ(z_{nk})x_{ni} + (a_k - 1)\right)
+    &= \μ_{ki} \left[ \left(\Σ_{n=1}^N \γ(z_{nk})(1-x_{ni}) + (b_k - 1)\right) + \left(\Σ_{n=1}^N \γ(z_{nk})x_{ni} + (a_k - 1)\right) \right]\\
+    \μ_{ki}
+    &= \÷{\Σ_{n=1}^N \γ(z_{nk})x_{ni} + (a_k - 1) }
+    { \Σ_{n=1}^N \γ(z_{nk}) + b_k + a_k  - 2 }\\
+    &= \÷{\Σ_{n=1}^N \γ(z_{nk})x_{ni} + (a_k - 1) }
+    {N_k + b_k + a_k  - 2 }\\
+\end{align*}
+
+And lastly for \(\B{\π}\):
+\begin{align*}
+    \pf{}{\π_{k}} \L(q,\B{\μ},\B{\π}) + \ln p(\B{\θ}) + \ln p(\B{\π})
+    &= \Σ_{n=1}^N \γ(z_{nk}) \÷{1}{\π_k}\\
+    &\quad + (\α_k - 1) \÷{1}{\π_k}\\
+    &\quad + \λ\\
+    &= \÷{1}{\π_k} \· (N_k + \α_k - 1) + \λ\\
+    &\equiv 0\\
+    &\⇒\\
+    \π_k
+    &= - \÷{N_k + \α_k -1}{\λ}\\
+    &\text{and:}\\
+    \λ
+    &= \λ \Σ_{k=1}^K \π_k\\
+    &= - (\Σ_{k=1}^K N_k + \Σ_{k=1}^K \α_k - \Σ_{k=1}^K 1)\\
+    &= - (N + \Σ_{k=1}^K \α_k - K)\\
+    &\⇒\\
+    \π_k
+    &= \÷{N_k + \α_k - 1}{N + \Σ_{k=1}^K \α_k - K}
+\end{align*}
+\end{document}
