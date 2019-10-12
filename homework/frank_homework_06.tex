@@ -3,14 +3,30 @@
 \usepackage{diagbox}
 \usepackage{centernot}
 \usepackage{tikz}
+\usetikzlibrary{bayesnet}
 \usepackage{enumerate}
 
 \newcommand{\indep}{\mathrel{\text{\scalebox{1.07}{\ensuremath{\perp\mkern-10mu\perp}}}}}
 \newcommand{\nindep}{\centernot{\indep}}
 
 \renewcommand{\thesection}{Problem \arabic{section}.}
-\renewcommand{\thesubsection}{\arabic{subsection}.}
 \renewcommand{\thesubsubsection}{\alph{subsubsection})}
+
+\def\usealphasub{0}
+\renewcommand{\thesubsection}{
+  \ifnum\usealphasub=1%
+    \alph{subsection})
+  \else
+    \arabic{subsection}.
+  \fi%
+}
+
+\newenvironment{alphasub}{%
+  \def\usealphasub{1}
+}{%
+  \def\usealphasub{0}
+}%
+
 
 \title{Machine Learning 2 --- Homework 6}
 \author{%
@@ -23,6 +39,7 @@
 \maketitle
 
 \section{}
+\begin{alphasub}
 We have PDF \(p(\B{x}),\ \B{x}\∈\ℝ^d\) and the approximation of it \(q(\B{x})\).
 
 \subsection{}
@@ -81,6 +98,7 @@ The importance sample
 importance sampler: no
 
 independence sampler: yes
+\end{alphasub}
 
 \section{}
 We have \(x\sim \N(x|\μ,\τ^{-1})\), \(\μ\sim \N(\μ|\μ_0,s_0)\) and \(\τ\sim \text{Gamma}(\τ|a,b)\).
@@ -101,15 +119,78 @@ To gibbs sample from the posterior \(p(\μ,\τ|x)\) we iteratively sample from t
 \subsection{}
 
 \section{}
+\begin{alphasub}
+We have \(p(\B{x}|\B{\μ}) = \Π_{i=1}^D \μ_i^{x_i} {(1-\μ_i)}^{1-x_i}\), \(\μ_i \∈ [0,1]\), \(x_i \∈ \{0,1\}\).
+
+\subsection{}
+\begin{align*}
+  \E[\B{x}]
+  &= \B{\μ}
+\end{align*}
+
+\subsection{}
+\begin{align*}
+  \cov(\B{x})
+  &= \text{diag}(\B{\μ}^T(1-\B{\μ}))
+\end{align*}
+
+\subsection{}
+Now we got an mixture: \(p(\B{x}|\B{\μ},\B{\π}) = \Σ_{k=1}^K \π_k p(\B{x}|\B{\μ}_k)\).
+And therefore now:
+\begin{align*}
+  \E[\B{x}]
+  &= \Σ_{k=1}^K \π_k \B{\μ}_k
+\end{align*}
+
+\subsection{}
+\begin{align*}
+  \log p(\B{X}|\B{\μ},\B{\π})
+  &= \log \Π_{n=1}^N p(\B{x}_n|\B{\μ},\B{\π})\\
+  &= \log \Π_{n=1}^N \Σ_{k=1}^K \left( \π_k p(\B{x}_n|\B{\μ}_k) \right)\\
+  &= \log \Π_{n=1}^N \Σ_{k=1}^K \left( \π_k \Π_{i=1}^D \μ_{ki}^{x_{ni}} {(1-\μ_{ki})}^{1-x_{ni}} \right)\\
+  &= \Σ_{n=1}^N \log \left[\Σ_{k=1}^K \left( \π_k \Π_{i=1}^D \μ_{ki}^{x_{ni}} {(1-\μ_{ki})}^{1-x_{ni}} \right)\right]\\
+\end{align*}
+
+\subsection{}
+A standard maximum likelihood approach would not work here as we have need to compute the logarithm of the sum.
+We do not have a closed-form solution and the computation of this logarithm is difficult.
+
+\subsection{}
+For our variationl approach we have: \(p(\B{x}_n,\B{z}_n|\B{\μ},\B{\π}) = p(\B{z}_n|\B{\π})p(\B{x}_n|\B{z}_n,\B{\μ}) = \Π_{k=1}^K \π_k^{z_{nk}} p(\B{x}_n|\B{\μ}_k)^{z_{nk}}\).
+
+The data log likelihood becomes:
+\begin{align*}
+  \log p(\B{X},\B{Z}|\B{\μ},\B{\μ})
+  &= \log \Π_{n=1}^N p(\B{z}_n|\B{\π})p(\B{x}_n|\B{z}_n,\B{\μ})\\
+  &= \Σ_{n=1}^N \log \Π_{k=1}^K \left( \π_k^{z_{nk}} p(\B{x}_n|\B{\μ}_k)^{z_{nk}} \right)\\
+  &= \Σ_{n=1}^N \Σ_{k=1}^K \log \left( \π_k^{z_{nk}} p(\B{x}_n|\B{\μ}_k)^{z_{nk}} \right)\\
+  &= \Σ_{n=1}^N \Σ_{k=1}^K \left( z_{nk}\· \log\π_k +  z_{nk}\· \log p(\B{x}_n|\B{\μ}_k) \right)\\
+  &= \Σ_{n=1}^N \Σ_{k=1}^K \left[ z_{nk}\· \log\π_k +  z_{nk}\· \log \left( \Π_{i=1}^D \μ_{ki}^{x_{ni}} {(1-\μ_{ki})}^{1-x_{ni}} \right)\right]\\
+  &= \Σ_{n=1}^N \Σ_{k=1}^K \left[ z_{nk}\· \log\π_k +  z_{nk}\· \Σ_{i=1}^D \left( x_{ni}\·\log\μ_{ki} + (1-x_{ni})\·\log (1-\μ_{ki}) \right)\right]\\
+\end{align*}
+
+\subsection{}
+\begin{center}
+  \begin{tikzpicture}
+    \node[obs]                   (x_ni) {\(x_{ni}\)};
+    \node[latent, above=of x_ni] (z_nk) {\(z_{nk}\)};
+    \node[const, right=of z_nk]  (pi)   {\(\B{\π}\)};
+    \node[const, right=of x_ni]  (mu)   {\(\B{\μ}\)};
+
+    % Connect the nodes
+    \edge {z_nk} {x_ni};
+    \edge {pi}   {z_nk};
+    \edge {mu}   {x_ni};
+
+    \plate {x}  {(x_ni)} {\(i=1,\cdots, D\)};
+    \plate {xz} {(x)(z_nk)} {\(n=1,\cdots, N\)} ;
+    % \plate {} {(w)(y)(yx.north west)(yx.south west)} {$M$} ;
+  \end{tikzpicture}
+\end{center}
+
 \subsection{}
 \subsection{}
 \subsection{}
-\subsection{}
-\subsection{}
-\subsection{}
-\subsection{}
-\subsection{}
-\subsection{}
-\subsection{}
+\end{alphasub}
 
 \end{document}
