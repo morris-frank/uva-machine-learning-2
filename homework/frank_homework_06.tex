@@ -83,6 +83,17 @@ importance sampler: no
 independence sampler: yes
 
 \section{}
+We have \(x\sim \N(x|\μ,\τ^{-1})\), \(\μ\sim \N(\μ|\μ_0,s_0)\) and \(\τ\sim \text{Gamma}(\τ|a,b)\).
+
+To gibbs sample from the posterior \(p(\μ,\τ|x)\) we iteratively sample from the conditionals \(p(\μ|\τ,x)\) and \(p(\τ|\μ,x)\).
+
+\begin{align*}
+  p(\μ|\τ,x)
+  &= \N\left(\μ|\÷{\τ^{-1}}{s_0 + \τ^{-1}}\·\μ_0 + \÷{s_0}{s_0 + \τ^{-1}}\· x, \÷{1}{\÷{1}{s_0}+\÷{1}{\τ^{-1}}}\right)\\
+  p(\τ|\μ,x)
+  &= \text{Gamma}(\τ|a + \÷{1}{2}, b + \÷{1}{2}{(x - \μ)}{2})\\
+\end{align*}
+(using Bishop 2.141/142 and 2.150/151)
 
 \section{}
 \subsection{}
