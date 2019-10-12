@@ -1,0 +1,104 @@
+\documentclass{article}
+\usepackage{morris}
+\usepackage{diagbox}
+\usepackage{centernot}
+\usepackage{tikz}
+\usepackage{enumerate}
+
+\newcommand{\indep}{\mathrel{\text{\scalebox{1.07}{\ensuremath{\perp\mkern-10mu\perp}}}}}
+\newcommand{\nindep}{\centernot{\indep}}
+
+\renewcommand{\thesection}{Problem \arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\alph{subsubsection})}
+
+\title{Machine Learning 2 --- Homework 6}
+\author{%
+  Maurice Frank\\
+  11650656\\
+  \href{mailto:maurice.frank@posteo.de}{maurice.frank@posteo.de}
+}
+
+\begin{document}
+\maketitle
+
+\section{}
+We have PDF \(p(\B{x}),\ \B{x}\∈\ℝ^d\) and the approximation of it \(q(\B{x})\).
+
+\subsection{}
+\begin{algorithm}
+  \caption{Rejection Sampler}
+  \begin{algorithmic}
+    \Function{sample\_rejection}{$q,\ \tilde{p},\ c$}
+      \State \(acc \gets False\)
+      \While{\(acc == False\)}
+        \State \(z_0 \gets \text{sample}(q(z))\)
+        \State \(u \gets \text{rand}[0, c\·q(z_0)]\)
+        \State \(acc \gets u \leq \tilde{p}(z)\)
+      \EndWhile
+      \State \Return \(z\)
+    \EndFunction%
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{}
+Yes the generated samples are independent.
+We sample independently from \(q(\B{z})\) which makes the accepted samples also independently.
+
+\subsection{}
+\begin{align*}
+  w_n
+  &= \÷{\nf{p(\B{z}_n)}{q(\B{z}_n)}}{\Σ_m \nf{p(\B{z}_m)}{q(\B{z}_m)}}
+\end{align*}
+
+\subsection{}
+\begin{align*}
+  \α(x_{t+1}, x_t)
+  &= \min{\left(1, \÷{\tilde{p}(x_{t+1}) q(x_t|x_{t+1})}{\tilde{p}(x_t) q(x_{t+1}|x_t)}\right)}\\
+  &= \min{\left(1, \÷{\tilde{p}(x_{t+1}) q(x_t|x_{t+1})}{\tilde{p}(x_t) q(x_{t+1})}\right)}\\
+  &= \min{\left(1, \÷{\tilde{p}(x_{t+1}) q(x_{t+1}|x_t) q(x_t)}{\tilde{p}(x_t) {q(x_{t+1})}^2}\right)}\\
+  &= \min{\left(1, \÷{\tilde{p}(x_{t+1}) q(x_t)}{\tilde{p}(x_t) q(x_{t+1})}\right)}\\
+  &= \min{\left(1, \÷{p(x_{t+1}) q(x_t)}{p(x_t) q(x_{t+1})}\right)}\\
+\end{align*}
+
+\subsection{}
+A proposed sample using the proposal distribution is chosing independent of the previous sample: \(q(x_{t+1}|x_t) = q(x_t)\).
+Whether or not the proposal is added to the chain though, is dependent on the previous sample's value.
+Thus two accepted successive samples in the chain are not independent of each other.
+
+\subsection{}
+When a proposal is rejected the independence sampler, samples the previous sample again:
+\begin{align*}
+  [x_1, x_1, x_3, x_4, x_4]
+\end{align*}
+
+\subsection{}
+The rejection sampler compares the volumes between the proposal approximate distribution and the unnormalized true distribution.
+With higher dimensionality the acceptance ratio will become exponentially small.
+\B{TODO FINISH WRITING}
+
+The importance sample
+importance sampler: no
+
+independence sampler: yes
+
+\section{}
+
+\section{}
+\subsection{}
+\subsection{}
+\subsection{}
+
+\section{}
+\subsection{}
+\subsection{}
+\subsection{}
+\subsection{}
+\subsection{}
+\subsection{}
+\subsection{}
+\subsection{}
+\subsection{}
+\subsection{}
+
+\end{document}
