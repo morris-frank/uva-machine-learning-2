@@ -170,9 +170,9 @@ To gibbs sample from the posterior \(p(\μ,\τ|x)\) we iteratively sample from t
       \÷{\Bf(\B{A}_{d,K\setminus i}+\α)}{\Bf(\α)} (\Π_k^{K} \÷{\Bf(\B{B}_{k,W\setminus i} + \β)}{\Bf(\β)})
     }\\
   &= \÷{
-      \Bf(\B{A}_{d}+\α) (\Π_k^K \Bf(\B{B}_k + \β))
+      \Bf(\B{A}_{d,\{1,\…,K\}}+\α) (\Π_k^K \Bf(\B{B}_{k,\{1,\…,V\}} + \β))
     }{
-      \Bf(\B{A}_{d,K\setminus i}+\α) (\Π_k^{K} \Bf(\B{B}_{k,W\setminus i} + \β))
+      \Bf(\B{A}_{d,\{1,\…,K\}\setminus z_{di}}+\α) (\Π_k^{K} \Bf(\B{B}_{k,\{1,\…,V\}\setminus D_i} + \β))
     }\\
 \end{align*}
 
@@ -255,23 +255,36 @@ The data log likelihood becomes:
   \cB(\{q_n(\B{z}_n)\},\B{\μ},\B{\π})
   &= \Σ_{n=1}^N H(q_n) + \Σ_{n=1}^N \E_{q_n}[\ln p(\B{x}_n, \B{z}_n|\B{\μ},\B{\π})]\\
   &= -\Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \log q_n(\B{z}_n) + \Σ_{n=1}^N q_n(\B{z}_n) \ln p(\B{x}_n, \B{z}_n|\B{\μ},\B{\π})\\
-  &= \Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \left( \Σ_{k=1}^K \left[ z_{nk} \log\π_k +  z_{nk}\· \Σ_{i=1}^D \left( x_{ni}\log\μ_{ki} + (1-x_{ni})\log (1-\μ_{ki}) \right)\right] - \log q_n(\B{z}_n) \right)
+  &= \Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \left( \left[\log\π_{\B{z}_n} + \Σ_{i=1}^D \left( x_{ni}\log\μ_{\B{z}_ni} + (1-x_{ni})\log (1-\μ_{\B{z}_ni}) \right)\right] - \log q_n(\B{z}_n) \right)
 \end{align*}
 
 \subsection{}
 \begin{align*}
   \tilde{\cB}(\{q_n(\B{z}_n)\}, \B{\μ}, \B{\π})
-  &= \Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \left( \Σ_{k=1}^K \left[ z_{nk} \log\π_k +  z_{nk}\· \Σ_{i=1}^D \left( x_{ni}\log\μ_{ki} + (1-x_{ni})\log (1-\μ_{ki}) \right)\right]\right.\\
-  &\quad\quad \left. - \log q_n(\B{z}_n) \right) + \α\·\left(\Σ_{k=1}^K \π_k - 1\right) + \Σ_{n=1}^N \λ_n \· \left(\Σ_{\B{z}_N} q_n(\B{z}_n) - 1\right)\\
+  &= \Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \left( \left[\log\π_{\B{z}_n} + \Σ_{i=1}^D \left( x_{ni}\log\μ_{\B{z}_ni} + (1-x_{ni})\log (1-\μ_{\B{z}_ni}) \right)\right]\right.\\
+  &\quad\quad \left. - \log q_n(\B{z}_n) \right) + \α\·\left(\Σ_{k=1}^K \π_{k} - 1\right) + \Σ_{n=1}^N \λ_n \· \left(\Σ_{\B{z}_N} q_n(\B{z}_n) - 1\right)\\
 \end{align*}
 
 \subsection{}
 \begin{align*}
-  \pf{}{q_n}\tilde{\cB}(\{q_n(\B{z}_n)\}, \B{\μ}, \B{\π})
-  &=
+  0 &= \pf{}{q_n(\B{z}_n)}\tilde{\cB}(\{q_n(\B{z}_n)\}, \B{\μ}, \B{\π})\\
+  0 &= \left[\log\π_{\B{z}_n} + \Σ_{i=1}^D \left( x_{ni}\log\μ_{\B{z}_ni} + (1-x_{ni})\log (1-\μ_{\B{z}_ni}) \right)\right] -\log q_n(\B{z}_n) - 1 + \λ_n\\
+  \log q_n(\B{z}_n) &= \left[\log\π_{\B{z}_n} + \Σ_{i=1}^D \left( x_{ni}\log\μ_{\B{z}_ni} + (1-x_{ni})\log (1-\μ_{\B{z}_ni}) \right)\right] + \λ_n - 1\\
+  q_n(\B{z}_n) &=  \π_{\B{z}_n} \· \Π_{i=1}^D \μ_{\B{z}_ni}^{x_{ni}} \· {(1-\μ_{\B{z}_ni})}^{(1-x_{ni})} \· \exp{(\λ_n - 1)}\\
 \end{align*}
+\B{TODO --- explanation}
 
 \subsection{}
+\begin{align*}
+  0 &= \pf{}{\π_k}\tilde{\cB}(\{q_n(\B{z}_n)\}, \B{\μ}, \B{\π})\\
+  0 &= \÷{\Σ_{n=1}^N \E[z_{nk}]}{\π_k} + \α\\
+  0 &= \÷{N_k}{\π_k} + \α\\
+  -\α\Σ_k^K \π_k &= \Σ_k^K N_k\\
+  \α &= -N\\
+  &\⇒\\
+  \π_k &= \÷{N_k}{N}
+\end{align*}
+
 \end{alphasub}
 
 \end{document}
