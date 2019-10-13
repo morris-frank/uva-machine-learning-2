@@ -236,8 +236,8 @@ The data log likelihood becomes:
   \begin{tikzpicture}
     \node[obs]                   (x_ni) {\(x_{ni}\)};
     \node[latent, above=of x_ni] (z_nk) {\(z_{n}\)};
-    \node[const, right=of z_nk]  (pi)   {\(\B{\π}_k\)};
-    \node[const, right=of x_ni]  (mu)   {\(\B{\μ}_k\)};
+    \node[const, right=of z_nk, xshift=1cm]  (pi)   {\(\B{\π}_k\)};
+    \node[const, right=of x_ni, xshift=1cm]  (mu)   {\(\B{\μ}_k\)};
 
     \edge {z_nk} {x_ni};
     \edge {pi}   {z_nk};
