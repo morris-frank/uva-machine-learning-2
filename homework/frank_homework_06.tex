@@ -12,6 +12,8 @@
 \renewcommand{\thesection}{Problem \arabic{section}.}
 \renewcommand{\thesubsubsection}{\alph{subsubsection})}
 
+\DeclareMathOperator{\Bf}{B}
+
 \def\usealphasub{0}
 \renewcommand{\thesubsection}{
   \ifnum\usealphasub=1%
@@ -115,8 +117,64 @@ To gibbs sample from the posterior \(p(\μ,\τ|x)\) we iteratively sample from t
 
 \section{}
 \subsection{}
+\begin{align*}
+  p(\B{W},\B{Z},\B{\Θ},\B{\Φ}|\α,\β)
+  &= p(\B{W}|\B{Z},\B{\Φ}) \· p(\B{Z}|\B{\Θ}) \· p(\B{\Φ}|\β) \· p(\B{\Θ}|\α)\\
+  &= p(\B{W}|\B{\Φ}) \· p(\B{\Φ}|\β) \· p(\B{Z}|\B{\Θ}) \· p(\B{\Θ}|\α)\\
+  p(\B{Z}|\B{\Θ}) \· p(\B{\Θ}|\α)
+  &= \Π_d^D p(\B{z}_d|\B{\θ}_d) p(\B{\θ}_d|\α)\\
+  &= \Π_d^D (\Π_n^{N_d} \Π_k^K p(z_{dn}=k|\θ_{dk})^{\δ(z_{dn}=k)}) p(\B{\θ}_d|\α)\\
+  &= \Π_d^D (\Π_k^K \θ_{dk}^{A_{dk}}) \· (\÷{1}{\Bf(\α)} \Π_k^K \θ_{dk}^{\α-1})\\
+  &= \Π_d^D \÷{1}{B(\α)} \Π_k^K \θ_{dk}^{A_{dk} + \α-1}\\
+  p(\B{W}|\B{\Φ}) \· p(\B{\Φ}|\β)
+  &= \Π_k^K (\Π_d^D \Π_n^{N_d} p(w_{dn}|z_{dn}, \φ_k)) \· p(\B{\φ}_k|\β)\\
+  &= \Π_k^K (\Π_d^D \Π_n^{N_d} \Π_w^W p(w_{dn}=w|z_{dn}=k,\φ_{kw})^{\δ(w_{dn}=w)\δ(z_{dn}=k)}) \· \÷{1}{B(\β)} \Π_w^W \φ_{kw}^{\β-1}\\
+  &= \Π_k^K \Π_w^W \φ_{kw}^{B_{kw}}, \φ_k \· \÷{1}{\Bf(\β)} \Π_w^W \φ_{kw}^{\β-1}\\
+  &= \Π_k^K \÷{1}{\Bf(\β)} \Π_w^W \φ_{kw}^{\Bf_{kw} + \β-1}\\
+  &\⇒\\
+  p(\B{W},\B{Z},\B{\Θ},\B{\Φ}|\α,\β)
+  &= \left(\Π_d^D \÷{1}{\Bf(\α)} \Π_k^K \θ_{dk}^{A_{dk} + \α-1}\right)
+     \left(\Π_k^K \÷{1}{\Bf(\β)} \Π_w^W \φ_{kw}^{B_{kw} + \β-1}\right)\\
+\end{align*}
+
 \subsection{}
+\begin{align*}
+  \int p(\B{W},\B{Z},\B{\Θ},\B{\Φ}|\α,\β) d\B{\θ}_d
+  &= \int \Π_d^D \÷{1}{\Bf(\α)} \Π_k^K \θ_{dk}^{A_{dk} + \α-1} d\B{\θ}_d\\
+  &= \Π_d^D \÷{1}{\Bf(\α)} \int \Π_k^K \θ_{dk}^{A_{dk} + \α-1} d\B{\θ}_d\\
+  &= \Π_d^D \÷{1}{\Bf(\α)} \int \÷{\Bf(\B{A}_{d}+\α)}{\Bf(\B{A}_{d}+\α)}\Π_k^K \θ_{dk}^{A_{dk} + \α-1} d\B{\θ}_d\\
+  &= \Π_d^D \÷{\Bf(\B{A}_{d}+\α)}{\Bf(\α)} \int \Dir({\B{A}_{d} + \α}) d\B{\θ}_d\\
+  &= \Π_d^D \÷{\Bf(\B{A}_{d}+\α)}{\Bf(\α)}\\
+  \int p(\B{W},\B{Z},\B{\Θ},\B{\Φ}|\α,\β) d\B{\φ}_k
+  &= \int \Π_k^K \÷{1}{\Bf(\β)} \Π_w^W \φ_{kw}^{B_{kw} + \β-1} d\B{\φ}_k\\
+  &= \Π_k^K \÷{1}{\Bf(\β)} \int \Π_w^W \φ_{kw}^{B_{kw} + \β-1} d\B{\φ}_k\\
+  &= \Π_k^K \÷{\Bf(\B{B}_k + \β)}{\Bf(\β)} \int \÷{1}{\Bf(\B{B}_k + \β)} \Π_w^W \φ_{kw}^{B_{kw} + \β-1} d\B{\φ}_k\\
+  &= \Π_k^K \÷{\Bf(\B{B}_k + \β)}{\Bf(\β)} \int \Dir(\B{B}_k + \β) d\B{\φ}_k\\
+  &= \Π_k^K \÷{\Bf(\B{B}_k + \β)}{\Bf(\β)}\\
+\end{align*}
+
 \subsection{}
+\begin{align*}
+  z_{di} &\sim p(z_{di} | z_{d\{N\setminus i\}}, \B{W}, \α, \β)\\
+  p(\B{Z},\B{W},\α,\β)
+  &= \left(\Π_d^D \÷{\Bf(\B{A}_{d}+\α)}{\Bf(\α)}\right)
+     \left(\Π_k^K \÷{\Bf(\B{B}_k + \β)}{\Bf(\β)}\right)\\
+\end{align*}
+
+\begin{align*}
+  p(z_{di} | z_{d\{N\setminus i\}}, \B{W}, \α, \β)
+  &= \÷{p(\B{Z}_{d}, \B{W}_d, \α, \β)}{p(\B{Z}_{d\{N\setminus i\}}, \B{W}, \α, \β)}\\
+  &= \÷{
+      \÷{\Bf(\B{A}_{d}+\α)}{\Bf(\α)} (\Π_k^K \÷{\Bf(\B{B}_k + \β)}{\Bf(\β)})
+    }{
+      \÷{\Bf(\B{A}_{d,K\setminus i}+\α)}{\Bf(\α)} (\Π_k^{K} \÷{\Bf(\B{B}_{k,W\setminus i} + \β)}{\Bf(\β)})
+    }\\
+  &= \÷{
+      \Bf(\B{A}_{d}+\α) (\Π_k^K \Bf(\B{B}_k + \β))
+    }{
+      \Bf(\B{A}_{d,K\setminus i}+\α) (\Π_k^{K} \Bf(\B{B}_{k,W\setminus i} + \β))
+    }\\
+\end{align*}
 
 \section{}
 \begin{alphasub}
@@ -195,8 +253,8 @@ The data log likelihood becomes:
 \subsection{}
 \begin{align*}
   \cB(\{q_n(\B{z}_n)\},\B{\μ},\B{\π})
-  &= \Σ_{n=1}^N H(q_n) + \Σ_{n=1}^N \E_{q_n}[\ln p(\B{x}_n, \B{z}_n|,\B{\μ},\B{\π})]\\
-  &= -\Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \log q_n(\B{z}_n) + \Σ_{n=1}^N q_n(\B{z}_n) \ln p(\B{x}_n, \B{z}_n|,\B{\μ},\B{\π})\\
+  &= \Σ_{n=1}^N H(q_n) + \Σ_{n=1}^N \E_{q_n}[\ln p(\B{x}_n, \B{z}_n|\B{\μ},\B{\π})]\\
+  &= -\Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \log q_n(\B{z}_n) + \Σ_{n=1}^N q_n(\B{z}_n) \ln p(\B{x}_n, \B{z}_n|\B{\μ},\B{\π})\\
   &= \Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \left( \Σ_{k=1}^K \left[ z_{nk} \log\π_k +  z_{nk}\· \Σ_{i=1}^D \left( x_{ni}\log\μ_{ki} + (1-x_{ni})\log (1-\μ_{ki}) \right)\right] - \log q_n(\B{z}_n) \right)
 \end{align*}
 
