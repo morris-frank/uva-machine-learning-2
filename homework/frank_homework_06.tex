@@ -124,6 +124,10 @@ We have \(p(\B{x}|\B{\μ}) = \Π_{i=1}^D \μ_i^{x_i} {(1-\μ_i)}^{1-x_i}\), \(\�
 
 \subsection{}
 \begin{align*}
+  \E[x_i]
+  &= \Σ_{x_i} x_i \· p(x_i|\μ_oi)\\
+  &= \Σ_{x_i} x_i \· \μ_i^{x_i} {(1-\μ_i)}^{1-x_i}\\
+  &= \μ_i\\
   \E[\B{x}]
   &= \B{\μ}
 \end{align*}
@@ -173,23 +177,42 @@ The data log likelihood becomes:
 \begin{center}
   \begin{tikzpicture}
     \node[obs]                   (x_ni) {\(x_{ni}\)};
-    \node[latent, above=of x_ni] (z_nk) {\(z_{nk}\)};
-    \node[const, right=of z_nk]  (pi)   {\(\B{\π}\)};
-    \node[const, right=of x_ni]  (mu)   {\(\B{\μ}\)};
+    \node[latent, above=of x_ni] (z_nk) {\(z_{n}\)};
+    \node[const, right=of z_nk]  (pi)   {\(\B{\π}_k\)};
+    \node[const, right=of x_ni]  (mu)   {\(\B{\μ}_k\)};
 
-    % Connect the nodes
     \edge {z_nk} {x_ni};
     \edge {pi}   {z_nk};
     \edge {mu}   {x_ni};
 
-    \plate {x}  {(x_ni)} {\(i=1,\cdots, D\)};
-    \plate {xz} {(x)(z_nk)} {\(n=1,\cdots, N\)} ;
-    % \plate {} {(w)(y)(yx.north west)(yx.south west)} {$M$} ;
+    \plate {D}  {(x_ni)}    {\(i=1,\cdots, D\)};
+    \plate {N}  {(D)(z_nk)} {\(n=1,\cdots, N\)};
+    \plate {K}  {(pi)(mu)}  {\(k=1,\cdots, K\)};
   \end{tikzpicture}
 \end{center}
 
+\newcommand{\cB}{\ensuremath{\mathcal{B}}}
 \subsection{}
+\begin{align*}
+  \cB(\{q_n(\B{z}_n)\},\B{\μ},\B{\π})
+  &= \Σ_{n=1}^N H(q_n) + \Σ_{n=1}^N \E_{q_n}[\ln p(\B{x}_n, \B{z}_n|,\B{\μ},\B{\π})]\\
+  &= -\Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \log q_n(\B{z}_n) + \Σ_{n=1}^N q_n(\B{z}_n) \ln p(\B{x}_n, \B{z}_n|,\B{\μ},\B{\π})\\
+  &= \Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \left( \Σ_{k=1}^K \left[ z_{nk} \log\π_k +  z_{nk}\· \Σ_{i=1}^D \left( x_{ni}\log\μ_{ki} + (1-x_{ni})\log (1-\μ_{ki}) \right)\right] - \log q_n(\B{z}_n) \right)
+\end{align*}
+
 \subsection{}
+\begin{align*}
+  \tilde{\cB}(\{q_n(\B{z}_n)\}, \B{\μ}, \B{\π})
+  &= \Σ_{n=1}^N \Σ_{\B{z}_k} q_n(\B{z}_n) \left( \Σ_{k=1}^K \left[ z_{nk} \log\π_k +  z_{nk}\· \Σ_{i=1}^D \left( x_{ni}\log\μ_{ki} + (1-x_{ni})\log (1-\μ_{ki}) \right)\right]\right.\\
+  &\quad\quad \left. - \log q_n(\B{z}_n) \right) + \α\·\left(\Σ_{k=1}^K \π_k - 1\right) + \Σ_{n=1}^N \λ_n \· \left(\Σ_{\B{z}_N} q_n(\B{z}_n) - 1\right)\\
+\end{align*}
+
+\subsection{}
+\begin{align*}
+  \pf{}{q_n}\tilde{\cB}(\{q_n(\B{z}_n)\}, \B{\μ}, \B{\π})
+  &=
+\end{align*}
+
 \subsection{}
 \end{alphasub}
 
