@@ -94,12 +94,15 @@ When a proposal is rejected the independence sampler, samples the previous sampl
 \subsection{}
 The rejection sampler compares the volumes between the proposal approximate distribution and the unnormalized true distribution.
 With higher dimensionality the acceptance ratio will become exponentially small.
-\B{TODO FINISH WRITING}
+Therefore the rejection sampler does perform considerably worse with higher dimensionality.
+Using the importance sampler we will have the problem of the sum in the weights to calculate.
+With more dimensions this sum will scale exponentially.
+Further the importance sampler has the problem that the proposal distribution has to have big enough mass over the whole support of the true distribution.
+As we increase the number of dimensions the mass is distributed over a exponentially growing volume thus increasing the risk of zeroing/near-zeroing an area which will make the weights ununsable.
 
-The importance sample
-importance sampler: no
-
-independence sampler: yes
+The independence sampler does not have theses \I{curse of dimensionality} problems that the rejection and importance sampler have.
+Through the Markov chain property the sampling for the independence sampler only depends on the previous sampler.
+The only complexity dependending on the number of dimensions is the sampling from the proposal distribution.
 \end{alphasub}
 
 \section{}
@@ -272,7 +275,9 @@ The data log likelihood becomes:
   \log q_n(\B{z}_n) &= \left[\log\π_{\B{z}_n} + \Σ_{i=1}^D \left( x_{ni}\log\μ_{\B{z}_ni} + (1-x_{ni})\log (1-\μ_{\B{z}_ni}) \right)\right] + \λ_n - 1\\
   q_n(\B{z}_n) &=  \π_{\B{z}_n} \· \Π_{i=1}^D \μ_{\B{z}_ni}^{x_{ni}} \· {(1-\μ_{\B{z}_ni})}^{(1-x_{ni})} \· \exp{(\λ_n - 1)}\\
 \end{align*}
-\B{TODO --- explanation}
+In the E-step we want to reduce the KL-divergence between \(p\) and \(q\).
+For that we want to raise the ELBO with the computed \(q_n(\B{z}_n)\).
+As such the \(q_n(\B{z}_n)\) are the best estimation of the likelihood.
 
 \subsection{}
 \begin{align*}
